@@ -16,8 +16,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Zap,
-  Eye,
-  EyeOff,
+  MessageSquare,
 } from "lucide-react"
 import Link from "next/link"
 import { useState, useRef, useEffect } from "react"
@@ -110,7 +109,6 @@ export default function ParagraphTranslationPage() {
   const [points, setPoints] = useState(240)
   const [streak, setStreak] = useState(7)
   const [timeSpent, setTimeSpent] = useState(0)
-  const [showPreview, setShowPreview] = useState(true)
   const [selectedWord, setSelectedWord] = useState<string | null>(null)
   const [wordDefinition, setWordDefinition] = useState<string | null>(null)
 
@@ -171,27 +169,48 @@ export default function ParagraphTranslationPage() {
     setShowHint(false)
   }
 
-  const renderParagraphPreview = () => {
+  const renderParagraph = () => {
     return paragraphInfo.sentences.map((sentence, index) => {
       let displayText = sentence.vietnamese
-      let className = "transition-all duration-500 ease-in-out px-2 py-1 rounded"
+      let textColor = "text-gray-400"
+      let bgColor = ""
 
+      // If sentence is completed, show translated version in green
       if (completedSentences.has(index)) {
         displayText = translatedSentences[index] || sentence.correct
-        className += " bg-emerald-500/20 text-emerald-300 border-l-4 border-emerald-500"
-      } else if (index === currentSentenceIndex) {
-        className += " bg-blue-500/20 text-blue-300 border-l-4 border-blue-500 animate-pulse"
-      } else if (index > currentSentenceIndex) {
-        className += " text-slate-500"
-      } else {
-        className += " text-slate-400 bg-slate-800/30"
+        textColor = "text-green-400"
+        bgColor = "bg-green-500/10"
+      }
+      // If it's the current sentence, highlight in pink
+      else if (index === currentSentenceIndex) {
+        textColor = "text-pink-400"
+        bgColor = "bg-pink-500/10"
+      }
+      // Future sentences remain gray
+      else if (index > currentSentenceIndex) {
+        textColor = "text-gray-500"
+      }
+      // Past incomplete sentences
+      else {
+        textColor = "text-gray-400"
       }
 
       return (
-        <div key={index} className={className}>
-          <span className="text-xs text-slate-400 mr-2">{index + 1}.</span>
+        <span
+          key={index}
+          className={`${textColor} ${bgColor} ${
+            index === currentSentenceIndex ? "px-2 py-1 rounded" : ""
+          } transition-all duration-500 ease-in-out`}
+          onClick={() => {
+            if (index < currentSentenceIndex || completedSentences.has(index)) {
+              setSelectedWord(null)
+              setWordDefinition(null)
+            }
+          }}
+        >
           {displayText}
-        </div>
+          {index < paragraphInfo.sentences.length - 1 ? " " : ""}
+        </span>
       )
     })
   }
@@ -302,47 +321,45 @@ export default function ParagraphTranslationPage() {
               <span className="text-lg mr-2">{languageFlags[language as keyof typeof languageFlags]}</span>
               Document Preview
             </h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowPreview(!showPreview)}
-              className="text-slate-400 hover:text-slate-100"
-            >
-              {showPreview ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </Button>
           </div>
 
-          {showPreview && (
-            <div className="flex-1 p-6 overflow-y-auto">
-              <div className="bg-slate-800/50 rounded-lg p-6 border border-slate-700/30">
-                <h4 className="text-lg font-semibold text-slate-200 mb-4 border-b border-slate-700/50 pb-2">
-                  {paragraphInfo.title}
-                </h4>
-                <div className="space-y-3 leading-relaxed">{renderParagraphPreview()}</div>
-              </div>
-
-              {/* Mini Progress Map */}
-              <div className="mt-6 bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
-                <h5 className="text-sm font-medium text-slate-300 mb-3">Progress Map</h5>
-                <div className="grid grid-cols-6 gap-2">
-                  {paragraphInfo.sentences.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`h-8 rounded flex items-center justify-center text-xs font-medium transition-all duration-300 ${
-                        completedSentences.has(index)
-                          ? "bg-emerald-500 text-white"
-                          : index === currentSentenceIndex
-                            ? "bg-blue-500 text-white"
-                            : "bg-slate-700 text-slate-400"
-                      }`}
-                    >
-                      {index + 1}
-                    </div>
-                  ))}
+          <div className="flex-1 p-6 overflow-y-auto">
+            {/* Original Paragraph Display */}
+            <div className="bg-slate-800/50 rounded-lg p-6 border border-slate-700/30">
+              <h4 className="text-lg font-semibold text-slate-200 mb-4 border-b border-slate-700/50 pb-2">
+                {paragraphInfo.title}
+              </h4>
+              <div className="text-lg leading-relaxed space-y-4">
+                <div className="text-2xl font-bold text-slate-300 mb-6">Hi Emma,</div>
+                <div className="text-lg leading-8">{renderParagraph()}</div>
+                <div className="text-slate-400 mt-8">
+                  <div>Trân trọng,</div>
+                  <div className="mt-2">Michael</div>
                 </div>
               </div>
             </div>
-          )}
+
+            {/* Mini Progress Map */}
+            <div className="mt-6 bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
+              <h5 className="text-sm font-medium text-slate-300 mb-3">Progress Map</h5>
+              <div className="grid grid-cols-6 gap-2">
+                {paragraphInfo.sentences.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-8 rounded flex items-center justify-center text-xs font-medium transition-all duration-300 ${
+                      completedSentences.has(index)
+                        ? "bg-emerald-500 text-white"
+                        : index === currentSentenceIndex
+                          ? "bg-pink-500 text-white"
+                          : "bg-slate-700 text-slate-400"
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Right Panel - Translation Workspace */}
@@ -353,9 +370,9 @@ export default function ParagraphTranslationPage() {
 
           <div className="flex-1 p-6 flex flex-col">
             {/* Current Sentence */}
-            <Card className="bg-slate-800/50 border-slate-700/50 mb-6">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
+            <Card className="bg-slate-800/50 border-slate-700/50 mb-4">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-slate-400 bg-slate-700/50 px-2 py-1 rounded">
                     SENTENCE {currentSentenceIndex + 1}
                   </span>
@@ -364,7 +381,7 @@ export default function ParagraphTranslationPage() {
                   </Button>
                 </div>
                 <div
-                  className="text-lg text-slate-200 leading-relaxed cursor-pointer"
+                  className="text-lg text-pink-400 bg-pink-500/10 p-3 rounded-lg cursor-pointer"
                   onClick={(e) => {
                     const target = e.target as HTMLElement
                     if (target.textContent) {
@@ -379,9 +396,65 @@ export default function ParagraphTranslationPage() {
               </CardContent>
             </Card>
 
+            {/* Feedback Section - Enhanced */}
+            {showResult && (
+              <Card
+                className={`mb-4 ${
+                  isCorrect ? "bg-emerald-500/10 border-emerald-500/30" : "bg-red-500/10 border-red-500/30"
+                }`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    {isCorrect ? (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 text-red-400" />
+                    )}
+                    <span className={`font-medium ${isCorrect ? "text-emerald-300" : "text-red-300"}`}>
+                      {isCorrect ? "Perfect Translation!" : "Needs Improvement"}
+                    </span>
+                  </div>
+
+                  {isCorrect ? (
+                    <div className="space-y-2">
+                      <div className="text-sm text-emerald-200">
+                        Excellent work! Your translation is accurate and natural. The sentence has been replaced in the
+                        paragraph and turned green.
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs text-emerald-300 bg-emerald-500/20 p-2 rounded">
+                        <Zap className="h-4 w-4" />
+                        <span>+25 points earned!</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="text-sm text-red-200">
+                        Your translation needs some adjustments. Try again with the correct answer below:
+                      </div>
+                      <div className="bg-slate-800/50 p-2 rounded text-slate-200 font-medium border-l-2 border-red-500">
+                        {currentSentence.correct}
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        Compare your answer with the correct translation and try again.
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
             {/* Translation Input */}
             <div className="flex-1 flex flex-col">
-              <label className="text-sm font-medium text-slate-300 mb-3">Your Translation:</label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-slate-300">Your Translation:</label>
+                {showHint && (
+                  <div className="flex items-center space-x-1 text-xs text-yellow-400">
+                    <Lightbulb className="h-3 w-3" />
+                    <span>Hint active</span>
+                  </div>
+                )}
+              </div>
+
               <div className="flex-1 relative">
                 <textarea
                   ref={textareaRef}
@@ -397,6 +470,38 @@ export default function ParagraphTranslationPage() {
                   {userAnswer.split(" ").filter((word) => word.length > 0).length} words
                 </div>
               </div>
+
+              {/* Hints Panel */}
+              {showHint && (
+                <div className="mt-3 p-3 rounded-lg border bg-yellow-500/10 border-yellow-500/30">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Lightbulb className="h-4 w-4 text-yellow-400" />
+                    <span className="font-medium text-yellow-300 text-sm">Translation Hints</span>
+                  </div>
+                  <ul className="text-xs text-yellow-200 space-y-1">
+                    {currentSentence.hints.map((hint, index) => (
+                      <li key={index} className="flex items-start space-x-1">
+                        <span>•</span>
+                        <span>{hint}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Dictionary Lookup */}
+              {selectedWord && wordDefinition && (
+                <div className="mt-3 p-3 rounded-lg border bg-blue-500/10 border-blue-500/30">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <BookOpen className="h-4 w-4 text-blue-400" />
+                    <span className="font-medium text-blue-300 text-sm">Dictionary</span>
+                  </div>
+                  <div className="text-xs">
+                    <span className="text-blue-200 font-medium">{selectedWord}</span>
+                    <span className="text-slate-300 ml-2">{wordDefinition}</span>
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between mt-4">
@@ -456,63 +561,23 @@ export default function ParagraphTranslationPage() {
         </div>
       </div>
 
-      {/* Bottom Panel - Feedback & Tools */}
-      <div className="bg-slate-800/50 border-t border-slate-700/50 px-6 py-4">
+      {/* Bottom Panel - Stats & Tools */}
+      <div className="bg-slate-800/50 border-t border-slate-700/50 px-6 py-3">
         <div className="container mx-auto">
-          <div className="grid grid-cols-3 gap-6">
-            {/* Feedback */}
-            {showResult && (
-              <div
-                className={`p-4 rounded-lg border ${
-                  isCorrect ? "bg-emerald-500/10 border-emerald-500/30" : "bg-red-500/10 border-red-500/30"
-                }`}
-              >
-                <div className="flex items-center space-x-2 mb-2">
-                  {isCorrect ? (
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                  ) : (
-                    <AlertCircle className="h-5 w-5 text-red-400" />
-                  )}
-                  <span className={`font-medium ${isCorrect ? "text-emerald-300" : "text-red-300"}`}>
-                    {isCorrect ? "Perfect Translation!" : "Needs Improvement"}
-                  </span>
-                </div>
-                {!isCorrect && (
-                  <div className="text-sm text-slate-300">
-                    <strong>Correct answer:</strong> {currentSentence.correct}
-                  </div>
-                )}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <MessageSquare className="h-4 w-4 text-slate-400" />
+                <span className="text-xs text-slate-300">
+                  {completedSentences.size}/{paragraphInfo.sentences.length} sentences
+                </span>
               </div>
-            )}
-
-            {/* Hints */}
-            {showHint && (
-              <div className="p-4 rounded-lg border bg-yellow-500/10 border-yellow-500/30">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Lightbulb className="h-5 w-5 text-yellow-400" />
-                  <span className="font-medium text-yellow-300">Translation Hints</span>
-                </div>
-                <ul className="text-sm text-yellow-200 space-y-1">
-                  {currentSentence.hints.map((hint, index) => (
-                    <li key={index}>• {hint}</li>
-                  ))}
-                </ul>
+              <div className="flex items-center space-x-2">
+                <Target className="h-4 w-4 text-emerald-400" />
+                <span className="text-xs text-slate-300">{accuracy}% accuracy</span>
               </div>
-            )}
-
-            {/* Dictionary */}
-            {selectedWord && wordDefinition && (
-              <div className="p-4 rounded-lg border bg-blue-500/10 border-blue-500/30">
-                <div className="flex items-center space-x-2 mb-2">
-                  <BookOpen className="h-5 w-5 text-blue-400" />
-                  <span className="font-medium text-blue-300">Dictionary</span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-blue-200 font-medium">{selectedWord}</span>
-                  <span className="text-slate-300 ml-2">{wordDefinition}</span>
-                </div>
-              </div>
-            )}
+            </div>
+            <div className="text-xs text-slate-400">Click on words in the Vietnamese text to see their translation</div>
           </div>
         </div>
       </div>
