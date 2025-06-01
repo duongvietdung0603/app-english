@@ -6,6 +6,37 @@
     "practice": "Luyện tập",
     "profile": "Hồ sơ"
   },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "login_description": "Đăng nhập để tiếp tục hành trình học ngôn ngữ",
+    "register_now": "Đăng ký ngay",
+    "no_account": "Chưa có tài khoản?",
+    "have_account": "Đã có tài khoản?",
+    "back_home": "← Về trang chủ"
+  },
+  "homepage": {
+    "hero_title": "Học ngôn ngữ mới một cách",
+    "hero_smart": "thông minh",
+    "hero_description": "Nền tảng học tiếng Anh và tiếng Nhật với phương pháp dịch thuật tương tác, giúp bạn nắm vững ngôn ngữ từ cơ bản đến nâng cao.",
+    "start_learning": "Bắt đầu học ngay",
+    "explore_courses": "Khám phá khóa học",
+    "features_title": "Tính năng nổi bật",
+    "vocabulary_learning": "Học từ vựng",
+    "vocabulary_desc": "Hệ thống từ vựng phong phú với các chủ đề đa dạng",
+    "interactive_translation": "Dịch tương tác",
+    "translation_desc": "Luyện tập dịch từ câu đơn đến đoạn văn phức tạp",
+    "smart_feedback": "Phản hồi thông minh",
+    "feedback_desc": "Hệ thống đánh giá và gợi ý cải thiện tức thì",
+    "multilingual": "Đa ngôn ngữ",
+    "multilingual_desc": "Hỗ trợ học tiếng Anh và tiếng Nhật",
+    "supported_languages": "Ngôn ngữ được hỗ trợ",
+    "english_desc": "Học tiếng Anh từ cơ bản đến nâng cao với phương pháp dịch thuật hiệu quả",
+    "japanese_desc": "Khám phá tiếng Nhật với hệ thống học tập tương tác và thú vị"
+  },
   "dashboard": {
     "welcome": "Chào mừng trở lại!",
     "continue_learning": "Tiếp tục học",
@@ -16,7 +47,25 @@
     "lessons_completed": "Bài học đã hoàn thành",
     "recent_activity": "Hoạt động gần đây",
     "start_lesson": "Bắt đầu bài học",
-    "view_all": "Xem tất cả"
+    "view_all": "Xem tất cả",
+    "learning_activities": "Hoạt động học tập",
+    "vocabulary_learning": "Học từ vựng",
+    "vocabulary_description": "Học từ và cụm từ mới",
+    "sentence_translation": "Dịch câu",
+    "sentence_description": "Luyện tập dịch câu",
+    "paragraph_translation": "Dịch đoạn văn",
+    "paragraph_description": "Dịch đoạn văn hoàn chỉnh",
+    "sentences_today": "câu hôm nay",
+    "paragraphs_completed": "đoạn văn đã hoàn thành",
+    "choose_your_language": "Chọn ngôn ngữ của bạn",
+    "progress_overview": "Tổng quan tiến độ",
+    "current_streak": "Chuỗi ngày hiện tại",
+    "keep_it_up": "Tiếp tục phát huy!",
+    "accuracy": "Độ chính xác",
+    "this_week": "tuần này",
+    "study_time": "Thời gian học",
+    "today": "hôm nay",
+    "level": "Cấp độ"
   },
   "vocabulary": {
     "title": "Từ vựng",
@@ -26,7 +75,8 @@
     "definition": "Định nghĩa",
     "example": "Ví dụ",
     "add_to_favorites": "Thêm vào yêu thích",
-    "practice_word": "Luyện tập từ"
+    "practice_word": "Luyện tập từ",
+    "word": "Từ"
   },
   "translation": {
     "title": "Dịch câu",
@@ -62,6 +112,7 @@
     "previous": "Trước",
     "finish": "Hoàn thành",
     "language": "Ngôn ngữ",
-    "settings": "Cài đặt"
+    "settings": "Cài đặt",
+    "demo_accounts": "Tài khoản Demo"
   }
 }

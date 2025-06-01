@@ -10,6 +10,8 @@ import { Globe } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useTranslation } from "@/app/contexts/language-context"
+import { LanguageSwitcher } from "@/app/components/language-switcher"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -17,6 +19,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("123456")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const { t } = useTranslation()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,6 +53,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-slate-800/50 border-slate-700/50">
+        {/* Header với Language Switcher */}
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher />
+        </div>
         <CardHeader className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
@@ -57,14 +64,14 @@ export default function LoginPage() {
             </div>
             <span className="text-2xl font-bold text-slate-100">LinguaLearn</span>
           </div>
-          <CardTitle className="text-2xl text-slate-100">Đăng nhập</CardTitle>
-          <CardDescription className="text-slate-400">Đăng nhập để tiếp tục hành trình học ngôn ngữ</CardDescription>
+          <CardTitle className="text-2xl text-slate-100">{t("auth.login")}</CardTitle>
+          <CardDescription className="text-slate-400">{t("auth.login_description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-slate-300">
-                Email
+                {t("auth.email")}
               </Label>
               <Input
                 id="email"
@@ -78,7 +85,7 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="text-slate-300">
-                Mật khẩu
+                {t("auth.password")}
               </Label>
               <Input
                 id="password"
@@ -92,13 +99,13 @@ export default function LoginPage() {
             </div>
             {error && <div className="text-red-400 text-sm text-center">{error}</div>}
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
-              {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+              {isLoading ? "Đang đăng nhập..." : t("auth.login")}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
             <span className="text-slate-400">Chưa có tài khoản? </span>
             <Link href="/auth/register" className="text-blue-400 hover:underline">
-              Đăng ký ngay
+              {t("auth.register_now")}
             </Link>
           </div>
           <div className="mt-4 text-center">

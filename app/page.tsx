@@ -1,9 +1,15 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Globe, Users, Zap, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { useTranslation } from "@/app/contexts/language-context"
+import { LanguageSwitcher } from "@/app/components/language-switcher"
 
 export default function HomePage() {
+  const { t } = useTranslation()
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
       {/* Header */}
@@ -19,18 +25,19 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
             <Link href="/auth/demo-accounts">
               <Button variant="ghost" className="text-slate-400 hover:text-slate-100 hover:bg-slate-700/50">
-                Demo Accounts
+                {t("common.demo_accounts")}
               </Button>
             </Link>
             <Link href="/auth/login">
               <Button variant="ghost" className="text-slate-400 hover:text-slate-100 hover:bg-slate-700/50">
-                Đăng nhập
+                {t("auth.login")}
               </Button>
             </Link>
             <Link href="/auth/register">
-              <Button className="bg-blue-600 hover:bg-blue-700">Đăng ký</Button>
+              <Button className="bg-blue-600 hover:bg-blue-700">{t("auth.register")}</Button>
             </Link>
           </div>
         </div>
@@ -42,12 +49,9 @@ export default function HomePage() {
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-5xl font-bold mb-6">
-              Học ngôn ngữ mới một cách <span className="text-blue-400">thông minh</span>
+              {t("homepage.hero_title")} <span className="text-blue-400">{t("homepage.hero_smart")}</span>
             </h2>
-            <p className="text-xl text-slate-300 mb-8">
-              Nền tảng học tiếng Anh và tiếng Nhật với phương pháp dịch thuật tương tác, giúp bạn nắm vững ngôn ngữ từ
-              cơ bản đến nâng cao.
-            </p>
+            <p className="text-xl text-slate-300 mb-8">{t("homepage.hero_description")}</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/auth/register">
                 <Button size="lg" className="px-8 py-6 bg-blue-600 hover:bg-blue-700 text-lg">

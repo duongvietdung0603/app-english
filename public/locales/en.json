@@ -6,6 +6,37 @@
     "practice": "Practice",
     "profile": "Profile"
   },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "login_description": "Login to continue your language learning journey",
+    "register_now": "Register now",
+    "no_account": "Don't have an account?",
+    "have_account": "Already have an account?",
+    "back_home": "← Back to home"
+  },
+  "homepage": {
+    "hero_title": "Learn new languages",
+    "hero_smart": "smartly",
+    "hero_description": "English and Japanese learning platform with interactive translation methods, helping you master languages from basic to advanced.",
+    "start_learning": "Start Learning Now",
+    "explore_courses": "Explore Courses",
+    "features_title": "Outstanding Features",
+    "vocabulary_learning": "Vocabulary Learning",
+    "vocabulary_desc": "Rich vocabulary system with diverse topics",
+    "interactive_translation": "Interactive Translation",
+    "translation_desc": "Practice translating from simple sentences to complex paragraphs",
+    "smart_feedback": "Smart Feedback",
+    "feedback_desc": "Instant evaluation and improvement suggestions system",
+    "multilingual": "Multilingual",
+    "multilingual_desc": "Support for English and Japanese learning",
+    "supported_languages": "Supported Languages",
+    "english_desc": "Learn English from basic to advanced with effective translation methods",
+    "japanese_desc": "Discover Japanese with interactive and interesting learning system"
+  },
   "dashboard": {
     "welcome": "Welcome back!",
     "continue_learning": "Continue Learning",
@@ -16,7 +47,25 @@
     "lessons_completed": "Lessons Completed",
     "recent_activity": "Recent Activity",
     "start_lesson": "Start Lesson",
-    "view_all": "View All"
+    "view_all": "View All",
+    "learning_activities": "Learning Activities",
+    "vocabulary_learning": "Vocabulary Learning",
+    "vocabulary_description": "Learn new words and phrases",
+    "sentence_translation": "Sentence Translation",
+    "sentence_description": "Practice translating sentences",
+    "paragraph_translation": "Paragraph Translation",
+    "paragraph_description": "Translate complete paragraphs",
+    "sentences_today": "sentences today",
+    "paragraphs_completed": "paragraphs completed",
+    "choose_your_language": "Choose Your Language",
+    "progress_overview": "Progress Overview",
+    "current_streak": "Current Streak",
+    "keep_it_up": "Keep it up!",
+    "accuracy": "Accuracy",
+    "this_week": "this week",
+    "study_time": "Study Time",
+    "today": "today",
+    "level": "Level"
   },
   "vocabulary": {
     "title": "Vocabulary",
@@ -26,7 +75,8 @@
     "definition": "Definition",
     "example": "Example",
     "add_to_favorites": "Add to Favorites",
-    "practice_word": "Practice Word"
+    "practice_word": "Practice Word",
+    "word": "Word"
   },
   "translation": {
     "title": "Sentence Translation",
@@ -62,6 +112,7 @@
     "previous": "Previous",
     "finish": "Finish",
     "language": "Language",
-    "settings": "Settings"
+    "settings": "Settings",
+    "demo_accounts": "Demo Accounts"
   }
 }

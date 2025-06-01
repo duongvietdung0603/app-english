@@ -6,6 +6,37 @@
     "practice": "練習",
     "profile": "プロフィール"
   },
+  "auth": {
+    "login": "ログイン",
+    "register": "登録",
+    "logout": "ログアウト",
+    "email": "メール",
+    "password": "パスワード",
+    "login_description": "言語学習の旅を続けるためにログイン",
+    "register_now": "今すぐ登録",
+    "no_account": "アカウントをお持ちでない？",
+    "have_account": "すでにアカウントをお持ちですか？",
+    "back_home": "← ホームに戻る"
+  },
+  "homepage": {
+    "hero_title": "新しい言語を",
+    "hero_smart": "スマートに",
+    "hero_description": "インタラクティブな翻訳方法で英語と日本語を学習するプラットフォーム。基礎から上級まで言語をマスターできます。",
+    "start_learning": "今すぐ学習開始",
+    "explore_courses": "コースを探索",
+    "features_title": "優れた機能",
+    "vocabulary_learning": "語彙学習",
+    "vocabulary_desc": "多様なトピックの豊富な語彙システム",
+    "interactive_translation": "インタラクティブ翻訳",
+    "translation_desc": "簡単な文から複雑な段落まで翻訳練習",
+    "smart_feedback": "スマートフィードバック",
+    "feedback_desc": "即座の評価と改善提案システム",
+    "multilingual": "多言語",
+    "multilingual_desc": "英語と日本語学習をサポート",
+    "supported_languages": "サポート言語",
+    "english_desc": "効果的な翻訳方法で基礎から上級まで英語を学習",
+    "japanese_desc": "インタラクティブで興味深い学習システムで日本語を発見"
+  },
   "dashboard": {
     "welcome": "おかえりなさい！",
     "continue_learning": "学習を続ける",
@@ -16,7 +47,25 @@
     "lessons_completed": "完了したレッスン",
     "recent_activity": "最近の活動",
     "start_lesson": "レッスンを始める",
-    "view_all": "すべて表示"
+    "view_all": "すべて表示",
+    "learning_activities": "学習活動",
+    "vocabulary_learning": "語彙学習",
+    "vocabulary_description": "新しい単語とフレーズを学ぶ",
+    "sentence_translation": "文章翻訳",
+    "sentence_description": "文章翻訳を練習",
+    "paragraph_translation": "段落翻訳",
+    "paragraph_description": "完全な段落を翻訳",
+    "sentences_today": "今日の文章",
+    "paragraphs_completed": "完了した段落",
+    "choose_your_language": "言語を選択",
+    "progress_overview": "進歩概要",
+    "current_streak": "現在の連続",
+    "keep_it_up": "続けて！",
+    "accuracy": "正確性",
+    "this_week": "今週",
+    "study_time": "学習時間",
+    "today": "今日",
+    "level": "レベル"
   },
   "vocabulary": {
     "title": "語彙",
@@ -26,7 +75,8 @@
     "definition": "定義",
     "example": "例",
     "add_to_favorites": "お気に入りに追加",
-    "practice_word": "単語を練習"
+    "practice_word": "単語を練習",
+    "word": "単語"
   },
   "translation": {
     "title": "文章翻訳",
@@ -62,6 +112,7 @@
     "previous": "前へ",
     "finish": "完了",
     "language": "言語",
-    "settings": "設定"
+    "settings": "設定",
+    "demo_accounts": "デモアカウント"
   }
 }
