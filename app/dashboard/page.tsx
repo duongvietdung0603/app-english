@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BookOpen, FileText, MessageSquare, User, LogOut, Globe, TrendingUp, Target, Clock } from "lucide-react"
+import { BookOpen, FileText, MessageSquare, LogOut, Globe, TrendingUp, Target, Clock } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -32,130 +32,143 @@ export default function DashboardPage() {
 
     if (user.preferredLanguage === "english") {
       return {
-        name: "Tiếng Anh",
+        name: "English",
         flag: "🇺🇸",
-        color: "blue",
+        color: "emerald",
         greeting: "Welcome back!",
-        description: "Tiếp tục hành trình học tiếng Anh của bạn",
+        description: "Continue your English learning journey",
       }
     } else if (user.preferredLanguage === "japanese") {
       return {
-        name: "Tiếng Nhật",
+        name: "Japanese",
         flag: "🇯🇵",
-        color: "red",
+        color: "emerald",
         greeting: "おかえりなさい！",
         description: "日本語の勉強を続けましょう",
       }
     } else {
       return {
-        name: "Đa ngôn ngữ",
+        name: "Multi-language",
         flag: "🌍",
-        color: "purple",
+        color: "emerald",
         greeting: "Welcome back!",
-        description: "Chọn ngôn ngữ bạn muốn học hôm nay",
+        description: "Choose your language for today's learning",
       }
     }
   }
 
-  const getAvailableLanguages = () => {
-    if (!user) return []
-
-    if (user.preferredLanguage === "both") {
-      return ["english", "japanese"]
-    }
-    return [user.preferredLanguage]
-  }
-
   const languageInfo = getLanguageInfo()
-  const availableLanguages = getAvailableLanguages()
 
   if (!user || !languageInfo) return null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Globe className="h-8 w-8 text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">LinguaLearn</h1>
+    <div className="min-h-screen bg-slate-900 text-slate-100">
+      {/* Professional Header */}
+      <header className="bg-slate-800/90 backdrop-blur-sm border-b border-slate-700/50">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+              <Globe className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-slate-100">LinguaLearn</h1>
+              <p className="text-xs text-slate-400">Language Learning Platform</p>
+            </div>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">{user.avatar}</span>
-              <User className="h-5 w-5 text-gray-600" />
-              <span className="text-sm text-gray-700">{user.name}</span>
+            <div className="flex items-center space-x-3">
+              <span className="text-xl">{user.avatar}</span>
+              <div className="text-right">
+                <div className="text-sm font-medium text-slate-200">{user.name}</div>
+                <div className="text-xs text-slate-400">{user.email}</div>
+              </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-slate-400 hover:text-slate-100 hover:bg-slate-700/50"
+            >
               <LogOut className="h-4 w-4 mr-2" />
-              Đăng xuất
+              Logout
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-6 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-4">
-            <span className="text-6xl">{languageInfo.flag}</span>
+          <div className="flex items-center space-x-4 mb-6">
+            <span className="text-4xl">{languageInfo.flag}</span>
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">{languageInfo.greeting}</h2>
-              <p className="text-xl text-gray-600">{user.name}</p>
-              <p className="text-gray-500">{languageInfo.description}</p>
+              <h2 className="text-2xl font-bold text-slate-100">{languageInfo.greeting}</h2>
+              <p className="text-slate-400">{languageInfo.description}</p>
             </div>
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Learning Activities */}
         {user.preferredLanguage !== "both" ? (
           // Single Language Layout
           <div className="mb-12">
-            <h3 className="text-2xl font-semibold mb-6">Hoạt động học tập</h3>
+            <h3 className="text-xl font-semibold mb-6 text-slate-200">Learning Activities</h3>
             <div className="grid md:grid-cols-3 gap-6">
               <Link href={`/learn/${user.preferredLanguage}/vocabulary`}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer h-full">
                   <CardHeader className="text-center">
-                    <BookOpen className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                    <CardTitle className="text-xl">Học từ vựng</CardTitle>
-                    <CardDescription>Mở rộng vốn từ vựng với flashcards tương tác</CardDescription>
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <BookOpen className="h-6 w-6 text-white" />
+                    </div>
+                    <CardTitle className="text-lg text-slate-100">Vocabulary Learning</CardTitle>
+                    <CardDescription className="text-slate-400">
+                      Expand your vocabulary with interactive flashcards
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">127</div>
-                      <p className="text-sm text-gray-600">từ đã học</p>
+                      <div className="text-2xl font-bold text-blue-400">127</div>
+                      <p className="text-sm text-slate-400">words learned</p>
                     </div>
                   </CardContent>
                 </Card>
               </Link>
 
               <Link href={`/practice/${user.preferredLanguage}/sentence-translation`}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer h-full">
                   <CardHeader className="text-center">
-                    <MessageSquare className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <CardTitle className="text-xl">Dịch câu</CardTitle>
-                    <CardDescription>Luyện tập dịch từng câu một cách chính xác</CardDescription>
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <MessageSquare className="h-6 w-6 text-white" />
+                    </div>
+                    <CardTitle className="text-lg text-slate-100">Sentence Translation</CardTitle>
+                    <CardDescription className="text-slate-400">
+                      Practice translating sentences accurately
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">45</div>
-                      <p className="text-sm text-gray-600">câu hôm nay</p>
+                      <div className="text-2xl font-bold text-emerald-400">45</div>
+                      <p className="text-sm text-slate-400">sentences today</p>
                     </div>
                   </CardContent>
                 </Card>
               </Link>
 
               <Link href={`/practice/${user.preferredLanguage}/paragraph-translation`}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer h-full">
                   <CardHeader className="text-center">
-                    <FileText className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                    <CardTitle className="text-xl">Dịch đoạn văn</CardTitle>
-                    <CardDescription>Thử thách với các đoạn văn phức tạp</CardDescription>
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <FileText className="h-6 w-6 text-white" />
+                    </div>
+                    <CardTitle className="text-lg text-slate-100">Paragraph Translation</CardTitle>
+                    <CardDescription className="text-slate-400">
+                      Challenge yourself with complex paragraphs
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">12</div>
-                      <p className="text-sm text-gray-600">đoạn hoàn thành</p>
+                      <div className="text-2xl font-bold text-purple-400">12</div>
+                      <p className="text-sm text-slate-400">paragraphs completed</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -165,59 +178,77 @@ export default function DashboardPage() {
         ) : (
           // Multi Language Layout for Admin
           <div className="mb-12">
-            <h3 className="text-2xl font-semibold mb-6">Chọn ngôn ngữ học hôm nay</h3>
+            <h3 className="text-xl font-semibold mb-6 text-slate-200">Choose Your Language</h3>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer">
                 <CardHeader className="text-center">
-                  <div className="text-6xl mb-4">🇺🇸</div>
-                  <CardTitle className="text-2xl">Tiếng Anh</CardTitle>
-                  <CardDescription>English Learning Path</CardDescription>
+                  <div className="text-4xl mb-4">🇺🇸</div>
+                  <CardTitle className="text-xl text-slate-100">English</CardTitle>
+                  <CardDescription className="text-slate-400">English Learning Path</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Link href="/learn/english/vocabulary" className="block">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                    >
                       <BookOpen className="h-4 w-4 mr-2" />
-                      Học từ vựng
+                      Vocabulary Learning
                     </Button>
                   </Link>
                   <Link href="/practice/english/sentence-translation" className="block">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                    >
                       <MessageSquare className="h-4 w-4 mr-2" />
-                      Dịch câu
+                      Sentence Translation
                     </Button>
                   </Link>
                   <Link href="/practice/english/paragraph-translation" className="block">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                    >
                       <FileText className="h-4 w-4 mr-2" />
-                      Dịch đoạn văn
+                      Paragraph Translation
                     </Button>
                   </Link>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer">
                 <CardHeader className="text-center">
-                  <div className="text-6xl mb-4">🇯🇵</div>
-                  <CardTitle className="text-2xl">Tiếng Nhật</CardTitle>
-                  <CardDescription>Japanese Learning Path</CardDescription>
+                  <div className="text-4xl mb-4">🇯🇵</div>
+                  <CardTitle className="text-xl text-slate-100">Japanese</CardTitle>
+                  <CardDescription className="text-slate-400">Japanese Learning Path</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Link href="/learn/japanese/vocabulary" className="block">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                    >
                       <BookOpen className="h-4 w-4 mr-2" />
-                      Học từ vựng
+                      Vocabulary Learning
                     </Button>
                   </Link>
                   <Link href="/practice/japanese/sentence-translation" className="block">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                    >
                       <MessageSquare className="h-4 w-4 mr-2" />
-                      Dịch câu
+                      Sentence Translation
                     </Button>
                   </Link>
                   <Link href="/practice/japanese/paragraph-translation" className="block">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                    >
                       <FileText className="h-4 w-4 mr-2" />
-                      Dịch đoạn văn
+                      Paragraph Translation
                     </Button>
                   </Link>
                 </CardContent>
@@ -228,49 +259,49 @@ export default function DashboardPage() {
 
         {/* Progress Overview */}
         <div className="mb-8">
-          <h3 className="text-2xl font-semibold mb-6">Tổng quan tiến độ</h3>
+          <h3 className="text-xl font-semibold mb-6 text-slate-200">Progress Overview</h3>
           <div className="grid md:grid-cols-4 gap-6">
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Streak hiện tại</CardTitle>
-                <TrendingUp className="h-4 w-4 text-orange-600" />
+                <CardTitle className="text-sm font-medium text-slate-300">Current Streak</CardTitle>
+                <TrendingUp className="h-4 w-4 text-orange-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-orange-600">7 ngày</div>
-                <p className="text-xs text-gray-600">Tiếp tục phát huy!</p>
+                <div className="text-2xl font-bold text-orange-400">7 days</div>
+                <p className="text-xs text-slate-400">Keep it up!</p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Độ chính xác</CardTitle>
-                <Target className="h-4 w-4 text-green-600" />
+                <CardTitle className="text-sm font-medium text-slate-300">Accuracy</CardTitle>
+                <Target className="h-4 w-4 text-emerald-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">85%</div>
-                <p className="text-xs text-gray-600">Tuần này</p>
+                <div className="text-2xl font-bold text-emerald-400">85%</div>
+                <p className="text-xs text-slate-400">This week</p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Thời gian học</CardTitle>
-                <Clock className="h-4 w-4 text-blue-600" />
+                <CardTitle className="text-sm font-medium text-slate-300">Study Time</CardTitle>
+                <Clock className="h-4 w-4 text-blue-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-blue-600">2.5h</div>
-                <p className="text-xs text-gray-600">Hôm nay</p>
+                <div className="text-2xl font-bold text-blue-400">2.5h</div>
+                <p className="text-xs text-slate-400">Today</p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Cấp độ</CardTitle>
-                <Globe className="h-4 w-4 text-purple-600" />
+                <CardTitle className="text-sm font-medium text-slate-300">Level</CardTitle>
+                <Globe className="h-4 w-4 text-purple-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-purple-600">Level 5</div>
-                <p className="text-xs text-gray-600">Trung cấp</p>
+                <div className="text-2xl font-bold text-purple-400">Level 5</div>
+                <p className="text-xs text-slate-400">Intermediate</p>
               </CardContent>
             </Card>
           </div>
@@ -278,29 +309,29 @@ export default function DashboardPage() {
 
         {/* Recent Activity */}
         <div>
-          <h3 className="text-2xl font-semibold mb-6">Hoạt động gần đây</h3>
-          <Card>
+          <h3 className="text-xl font-semibold mb-6 text-slate-200">Recent Activity</h3>
+          <Card className="bg-slate-800/50 border-slate-700/50">
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Hoàn thành bài học từ vựng "Gia đình"</p>
-                    <p className="text-xs text-gray-500">2 giờ trước</p>
+                    <p className="text-sm font-medium text-slate-200">Completed vocabulary lesson "Family"</p>
+                    <p className="text-xs text-slate-400">2 hours ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Dịch thành công 15 câu liên tiếp</p>
-                    <p className="text-xs text-gray-500">5 giờ trước</p>
+                    <p className="text-sm font-medium text-slate-200">Successfully translated 15 sentences in a row</p>
+                    <p className="text-xs text-slate-400">5 hours ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Đạt streak 7 ngày</p>
-                    <p className="text-xs text-gray-500">Hôm qua</p>
+                    <p className="text-sm font-medium text-slate-200">Achieved 7-day streak</p>
+                    <p className="text-xs text-slate-400">Yesterday</p>
                   </div>
                 </div>
               </div>

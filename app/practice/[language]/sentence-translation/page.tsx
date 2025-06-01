@@ -1,9 +1,23 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, Lightbulb, Send, Sparkles, Award, RotateCcw, Volume2 } from "lucide-react"
+import {
+  ArrowLeft,
+  Lightbulb,
+  Send,
+  Target,
+  Clock,
+  Award,
+  Volume2,
+  RotateCcw,
+  CheckCircle2,
+  AlertCircle,
+  Zap,
+  MessageSquare,
+  BookOpen,
+} from "lucide-react"
 import Link from "next/link"
 import { useState, useRef, useEffect } from "react"
 import { useParams } from "next/navigation"
@@ -87,84 +101,47 @@ export default function SentenceTranslationPage() {
   const [credits, setCredits] = useState(8)
   const [points, setPoints] = useState(95)
   const [streak, setStreak] = useState(5)
-  const [showAnimation, setShowAnimation] = useState(false)
-  const [showCorrectAnimation, setShowCorrectAnimation] = useState(false)
-  const [showIncorrectAnimation, setShowIncorrectAnimation] = useState(false)
-  const [chatMessages, setChatMessages] = useState<Array<{ type: string; content: string; isCorrect?: boolean }>>([])
-  const chatEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [timeSpent, setTimeSpent] = useState(0)
+  const [selectedWord, setSelectedWord] = useState<string | null>(null)
+  const [wordDefinition, setWordDefinition] = useState<string | null>(null)
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const sentences = sentenceData[language as keyof typeof sentenceData] || sentenceData.english
   const currentSentence = sentences[currentIndex]
   const progress = ((currentIndex + 1) / sentences.length) * 100
+  const accuracy = completedSentences.size > 0 ? Math.round((completedSentences.size / (currentIndex + 1)) * 100) : 100
 
+  // Timer effect
   useEffect(() => {
-    // Add initial message
-    if (chatMessages.length === 0) {
-      setChatMessages([
-        {
-          type: "system",
-          content: `Chào mừng bạn đến với bài tập dịch câu! Hãy dịch các câu sau sang ${
-            language === "english" ? "Tiếng Anh" : "Tiếng Nhật"
-          }.`,
-        },
-        {
-          type: "assistant",
-          content: currentSentence.vietnamese,
-        },
-      ])
+    timerRef.current = setInterval(() => {
+      setTimeSpent((prev) => prev + 1)
+    }, 1000)
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
     }
   }, [])
 
+  // Auto-resize textarea
   useEffect(() => {
-    // Scroll to bottom of chat
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [chatMessages])
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"
+    }
+  }, [userAnswer])
 
   const checkAnswer = () => {
     const correct = userAnswer.trim().toLowerCase() === currentSentence.correct.toLowerCase()
     setIsCorrect(correct)
     setShowResult(true)
-
-    // Add user message
-    setChatMessages([
-      ...chatMessages,
-      {
-        type: "user",
-        content: userAnswer,
-        isCorrect: correct,
-      },
-    ])
-
     if (correct) {
       setCompletedSentences((prev) => new Set([...prev, currentIndex]))
       setPoints(points + 15)
       setCredits(credits + 1)
-      setShowCorrectAnimation(true)
-      setTimeout(() => setShowCorrectAnimation(false), 1500)
-
-      // Add feedback message
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          type: "feedback",
-          content: "Tuyệt vời! Bản dịch của bạn hoàn toàn chính xác.",
-          isCorrect: true,
-        },
-      ])
-    } else {
-      setShowIncorrectAnimation(true)
-      setTimeout(() => setShowIncorrectAnimation(false), 1500)
-
-      // Add feedback message
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          type: "feedback",
-          content: `Chưa chính xác. Đáp án đúng là: "${currentSentence.correct}"`,
-          isCorrect: false,
-        },
-      ])
     }
   }
 
@@ -174,26 +151,6 @@ export default function SentenceTranslationPage() {
       setUserAnswer("")
       setShowResult(false)
       setShowHint(false)
-      setShowAnimation(true)
-      setTimeout(() => setShowAnimation(false), 500)
-
-      // Add next sentence message
-      setChatMessages([
-        ...chatMessages,
-        {
-          type: "system",
-          content: "Tiếp tục với câu tiếp theo!",
-        },
-        {
-          type: "assistant",
-          content: sentences[currentIndex + 1].vietnamese,
-        },
-      ])
-
-      // Focus input
-      setTimeout(() => {
-        inputRef.current?.focus()
-      }, 100)
     }
   }
 
@@ -201,39 +158,57 @@ export default function SentenceTranslationPage() {
     setUserAnswer("")
     setShowResult(false)
     setShowHint(false)
-
-    // Add system message
-    setChatMessages([
-      ...chatMessages,
-      {
-        type: "system",
-        content: "Hãy thử lại!",
-      },
-    ])
-
-    // Focus input
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 100)
   }
 
-  const toggleHint = () => {
-    setShowHint(!showHint)
-    if (!showHint) {
-      // Add hint message
-      setChatMessages([
-        ...chatMessages,
-        {
-          type: "hint",
-          content: currentSentence.hints.join(" | "),
-        },
-      ])
+  const renderCompactSentenceList = () => {
+    return (
+      <div className="grid grid-cols-6 gap-2">
+        {sentences.map((_, index) => {
+          let bgColor = "bg-slate-700"
+          let textColor = "text-slate-400"
+
+          if (completedSentences.has(index)) {
+            bgColor = "bg-emerald-500"
+            textColor = "text-white"
+          } else if (index === currentIndex) {
+            bgColor = "bg-blue-500"
+            textColor = "text-white"
+          }
+
+          return (
+            <div
+              key={index}
+              className={`h-8 rounded flex items-center justify-center text-xs font-medium transition-all duration-300 ${bgColor} ${textColor}`}
+            >
+              {completedSentences.has(index) ? "✓" : index + 1}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
+
+  const handleWordClick = (word: string) => {
+    setSelectedWord(word)
+    const definitions: { [key: string]: string } = {
+      tôi: "I, me",
+      đang: "currently",
+      học: "learn, study",
+      tiếng: "language",
+      anh: "English",
     }
+    setWordDefinition(definitions[word.toLowerCase()] || "No definition found")
   }
 
   const languageNames = {
-    english: "Tiếng Anh",
-    japanese: "Tiếng Nhật",
+    english: "English",
+    japanese: "Japanese",
   }
 
   const languageFlags = {
@@ -242,262 +217,332 @@ export default function SentenceTranslationPage() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-b from-indigo-900 via-indigo-800 to-indigo-900 text-white flex flex-col">
-      {/* Correct Animation */}
-      {showCorrectAnimation && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-          <div className="animate-bounce flex flex-col items-center">
-            <Sparkles className="h-24 w-24 text-yellow-400 animate-pulse" />
-            <span className="text-4xl font-bold text-yellow-400 mt-4">Tuyệt vời!</span>
-          </div>
-        </div>
-      )}
-
-      {/* Incorrect Animation */}
-      {showIncorrectAnimation && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-          <div className="animate-shake flex flex-col items-center">
-            <div className="text-4xl font-bold text-red-400">Chưa đúng!</div>
-            <div className="text-xl text-red-300 mt-2">Hãy thử lại</div>
-          </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <header className="bg-indigo-800/50 backdrop-blur-sm border-b border-indigo-700/50 flex-shrink-0 py-3 px-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-indigo-200 hover:text-white hover:bg-indigo-700/50 rounded-full"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <div className="flex items-center">
-              <span className="text-2xl mr-2">{languageFlags[language as keyof typeof languageFlags]}</span>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-200 to-indigo-100 text-transparent bg-clip-text">
-                {languageNames[language as keyof typeof languageNames]}
-              </h1>
+    <div className="h-screen bg-slate-900 text-slate-100 flex flex-col">
+      {/* Professional Header */}
+      <header className="bg-slate-800/90 backdrop-blur-sm border-b border-slate-700/50 flex-shrink-0">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link href="/dashboard">
+                <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-100 hover:bg-slate-700/50">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Exit
+                </Button>
+              </Link>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                  <MessageSquare className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-semibold text-slate-100">Sentence Translation</h1>
+                  <p className="text-xs text-slate-400">
+                    Practice • {languageNames[language as keyof typeof languageNames]}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Stats */}
-          <div className="flex items-center space-x-3">
-            <Card className="bg-indigo-700/30 border-indigo-600/30 px-3 py-1 flex items-center space-x-1">
-              <span className="text-yellow-300 text-sm">⭐</span>
-              <span className="text-indigo-100 text-sm">{points}</span>
-            </Card>
-            <Card className="bg-indigo-700/30 border-indigo-600/30 px-3 py-1 flex items-center space-x-1">
-              <Award className="h-4 w-4 text-yellow-300" />
-              <span className="text-indigo-100 text-sm">{streak}</span>
-            </Card>
+            {/* Stats Bar */}
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-slate-400" />
+                <span className="text-sm text-slate-300">{formatTime(timeSpent)}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Target className="h-4 w-4 text-emerald-400" />
+                <span className="text-sm text-emerald-300">{accuracy}%</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Zap className="h-4 w-4 text-yellow-400" />
+                <span className="text-sm text-yellow-300">{points}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Award className="h-4 w-4 text-orange-400" />
+                <span className="text-sm text-orange-300">{streak}</span>
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Progress Bar */}
-      <div className="container mx-auto px-4 py-2 flex items-center space-x-4">
-        <div className="text-xs text-indigo-300">
-          {currentIndex + 1}/{sentences.length}
-        </div>
-        <div className="flex-1">
-          <Progress value={progress} className="h-2 bg-indigo-700/50">
+      {/* Progress Indicator */}
+      <div className="bg-slate-800/50 px-6 py-3 border-b border-slate-700/30">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-slate-400">
+              Sentence {currentIndex + 1} of {sentences.length}
+            </span>
+            <span className="text-xs text-slate-400">{completedSentences.size} completed</span>
+          </div>
+          <Progress value={progress} className="h-1.5 bg-slate-700/50">
             <div
-              className="h-full bg-gradient-to-r from-blue-400 to-indigo-300 transition-all duration-500 ease-out rounded-full"
+              className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-700 ease-out rounded-full"
               style={{ width: `${progress}%` }}
             />
           </Progress>
         </div>
-        <div className="flex space-x-1">
-          {sentences.map((_, idx) => (
-            <div
-              key={idx}
-              className={`w-2 h-2 rounded-full ${
-                completedSentences.has(idx)
-                  ? "bg-green-400"
-                  : idx === currentIndex
-                    ? "bg-indigo-300"
-                    : "bg-indigo-700/50"
-              }`}
-            />
-          ))}
-        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 container mx-auto px-4 py-2 flex flex-col min-h-0">
-        {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto mb-4 pr-2 scrollbar-thin scrollbar-thumb-indigo-600 scrollbar-track-indigo-900/30">
-          <div className="space-y-4 pb-2">
-            {chatMessages.map((message, idx) => (
-              <div key={idx} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-                {message.type === "user" && (
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                      message.isCorrect === true
-                        ? "bg-green-500/20 border border-green-500/30 text-green-100"
-                        : message.isCorrect === false
-                          ? "bg-red-500/20 border border-red-500/30 text-red-100"
-                          : "bg-indigo-600/50 border border-indigo-500/30 text-indigo-100"
-                    }`}
-                  >
-                    {message.content}
-                    {message.isCorrect === true && <span className="ml-2 text-green-300">✓</span>}
-                    {message.isCorrect === false && <span className="ml-2 text-red-300">✗</span>}
-                  </div>
-                )}
-
-                {message.type === "assistant" && (
-                  <div className="max-w-[80%] bg-indigo-700/40 border border-indigo-600/30 rounded-2xl px-4 py-2 text-indigo-100">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-xs font-medium text-indigo-300">Dịch câu này:</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 rounded-full bg-indigo-600/30 hover:bg-indigo-600/50"
-                      >
-                        <Volume2 className="h-3 w-3 text-indigo-300" />
-                      </Button>
-                    </div>
-                    <div className="text-lg">{message.content}</div>
-                  </div>
-                )}
-
-                {message.type === "system" && (
-                  <div className="max-w-[80%] bg-indigo-800/30 border border-indigo-700/30 rounded-2xl px-4 py-2 text-indigo-300 text-sm">
-                    {message.content}
-                  </div>
-                )}
-
-                {message.type === "feedback" && (
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                      message.isCorrect
-                        ? "bg-green-500/20 border border-green-500/30 text-green-100"
-                        : "bg-red-500/20 border border-red-500/30 text-red-100"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className={`text-xs font-medium ${message.isCorrect ? "text-green-300" : "text-red-300"}`}>
-                        {message.isCorrect ? "Chính xác!" : "Chưa đúng"}
-                      </span>
-                    </div>
-                    {message.content}
-                  </div>
-                )}
-
-                {message.type === "hint" && (
-                  <div className="max-w-[80%] bg-yellow-500/20 border border-yellow-500/30 rounded-2xl px-4 py-2 text-yellow-100">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <Lightbulb className="h-4 w-4 text-yellow-300" />
-                      <span className="text-xs font-medium text-yellow-300">Gợi ý</span>
-                    </div>
-                    {message.content}
-                  </div>
-                )}
-              </div>
-            ))}
-            <div ref={chatEndRef} />
+      {/* Main Content Area */}
+      <div className="flex-1 flex min-h-0">
+        {/* Left Panel - Progress & Translation Input */}
+        <div className="w-1/2 border-r border-slate-700/50 flex flex-col">
+          <div className="bg-slate-800/30 px-6 py-3 border-b border-slate-700/30 flex items-center justify-between">
+            <h3 className="text-sm font-medium text-slate-300 flex items-center">
+              <span className="text-lg mr-2">{languageFlags[language as keyof typeof languageFlags]}</span>
+              Progress & Translation
+            </h3>
           </div>
-        </div>
 
-        {/* Input Area */}
-        <div
-          className={`bg-indigo-800/30 backdrop-blur-sm border border-indigo-700/50 rounded-xl p-3 transition-all duration-300 ${
-            showAnimation ? "animate-pulse" : ""
-          }`}
-        >
-          <div className="flex items-center space-x-2">
-            <div className="flex-1 relative">
-              <input
-                ref={inputRef}
-                type="text"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder={`Dịch sang ${languageNames[language as keyof typeof languageNames]}...`}
-                className="w-full bg-indigo-700/30 border border-indigo-600/50 rounded-lg px-4 py-3 text-white placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                disabled={showResult && isCorrect}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && userAnswer.trim() && !showResult) {
-                    checkAnswer()
-                  }
-                }}
-              />
-              {showResult && !isCorrect && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-indigo-600/50 hover:bg-indigo-600/70"
-                  onClick={tryAgain}
-                >
-                  <RotateCcw className="h-4 w-4 text-indigo-300" />
-                </Button>
-              )}
+          <div className="flex-1 p-6 overflow-y-auto">
+            {/* Progress Map */}
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30 mb-6">
+              <h5 className="text-sm font-medium text-slate-300 mb-3">
+                Progress ({completedSentences.size}/{sentences.length})
+              </h5>
+              {renderCompactSentenceList()}
+
+              {/* Accuracy */}
+              <div className="mt-4 text-center">
+                <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Target className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-lg font-bold text-emerald-400">{accuracy}%</div>
+                <div className="text-xs text-slate-400">Accuracy</div>
+              </div>
             </div>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 rounded-full bg-indigo-600/50 hover:bg-indigo-600/70"
-              onClick={toggleHint}
-            >
-              <Lightbulb className={`h-5 w-5 ${showHint ? "text-yellow-300" : "text-indigo-300"}`} />
-            </Button>
+            {/* Translation Input Area */}
+            <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
+              <h5 className="text-sm font-medium text-slate-300 mb-3">Your Translation</h5>
 
-            <Button
-              className={`rounded-full px-5 py-2 ${
-                showResult && isCorrect
-                  ? "bg-green-500 hover:bg-green-600 text-white"
-                  : "bg-indigo-500 hover:bg-indigo-600 text-white"
-              }`}
-              onClick={showResult && isCorrect ? nextSentence : checkAnswer}
-              disabled={!userAnswer.trim() && !showResult}
-            >
-              {showResult && isCorrect ? (
-                currentIndex < sentences.length - 1 ? (
-                  "Tiếp tục"
-                ) : (
-                  "Hoàn thành"
-                )
-              ) : (
-                <>
-                  <Send className="h-4 w-4 mr-2" />
-                  Gửi
-                </>
-              )}
-            </Button>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-400">
+                    Translate to {languageNames[language as keyof typeof languageNames]}:
+                  </label>
+                  {showHint && (
+                    <div className="flex items-center space-x-1 text-xs text-yellow-400">
+                      <Lightbulb className="h-3 w-3" />
+                      <span>Hint active</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <textarea
+                    ref={textareaRef}
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder={`Type your ${languageNames[language as keyof typeof languageNames]} translation here...`}
+                    className="w-full min-h-[100px] max-h-[200px] bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 resize-none text-sm"
+                    disabled={showResult && isCorrect}
+                  />
+
+                  {/* Word count */}
+                  <div className="absolute bottom-2 right-2 text-xs text-slate-500">
+                    {userAnswer.split(" ").filter((word) => word.length > 0).length} words
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowHint(!showHint)}
+                      className="border-slate-600 text-slate-300 hover:bg-slate-700/50 text-xs"
+                    >
+                      <Lightbulb className="h-3 w-3 mr-1" />
+                      {showHint ? "Hide Hint" : "Show Hint"}
+                    </Button>
+
+                    {showResult && !isCorrect && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={tryAgain}
+                        className="border-slate-600 text-slate-300 hover:bg-slate-700/50 text-xs"
+                      >
+                        <RotateCcw className="h-3 w-3 mr-1" />
+                        Try Again
+                      </Button>
+                    )}
+                  </div>
+
+                  <Button
+                    onClick={showResult && isCorrect ? nextSentence : checkAnswer}
+                    disabled={!userAnswer.trim() && !showResult}
+                    size="sm"
+                    className={`text-xs ${
+                      showResult && isCorrect ? "bg-emerald-600 hover:bg-emerald-700" : "bg-blue-600 hover:bg-blue-700"
+                    }`}
+                  >
+                    {showResult && isCorrect ? (
+                      currentIndex < sentences.length - 1 ? (
+                        <>
+                          Next
+                          <ArrowLeft className="h-3 w-3 ml-1 rotate-180" />
+                        </>
+                      ) : (
+                        <>
+                          Complete
+                          <CheckCircle2 className="h-3 w-3 ml-1" />
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <Send className="h-3 w-3 mr-1" />
+                        Submit
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel - Current Sentence & Feedback */}
+        <div className="w-1/2 flex flex-col">
+          <div className="bg-slate-800/30 px-6 py-3 border-b border-slate-700/30">
+            <h3 className="text-sm font-medium text-slate-300">Current Sentence</h3>
+          </div>
+
+          <div className="flex-1 p-6 overflow-y-auto">
+            {/* Current Sentence */}
+            <Card className="bg-slate-800/50 border-slate-700/50 mb-4">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-slate-400 bg-slate-700/50 px-2 py-1 rounded">
+                    SENTENCE {currentIndex + 1}
+                  </span>
+                  <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-100">
+                    <Volume2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div
+                  className="text-lg text-blue-400 bg-blue-500/10 p-3 rounded-lg cursor-pointer"
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement
+                    if (target.textContent) {
+                      const words = target.textContent.split(" ")
+                      const clickedWord = words.find((word) => target.textContent!.includes(word))
+                      if (clickedWord) handleWordClick(clickedWord)
+                    }
+                  }}
+                >
+                  "{currentSentence.vietnamese}"
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Feedback Section */}
+            {showResult && (
+              <Card
+                className={`mb-4 ${
+                  isCorrect ? "bg-emerald-500/10 border-emerald-500/30" : "bg-red-500/10 border-red-500/30"
+                }`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    {isCorrect ? (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 text-red-400" />
+                    )}
+                    <span className={`font-medium ${isCorrect ? "text-emerald-300" : "text-red-300"}`}>
+                      {isCorrect ? "Perfect Translation!" : "Needs Improvement"}
+                    </span>
+                  </div>
+
+                  {isCorrect ? (
+                    <div className="space-y-2">
+                      <div className="text-sm text-emerald-200">
+                        Excellent work! Your translation is accurate and natural.
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs text-emerald-300 bg-emerald-500/20 p-2 rounded">
+                        <Zap className="h-4 w-4" />
+                        <span>+15 points earned!</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="text-sm text-red-200">
+                        Your translation needs some adjustments. Try again with the correct answer below:
+                      </div>
+                      <div className="bg-slate-800/50 p-2 rounded text-slate-200 font-medium border-l-2 border-red-500">
+                        {currentSentence.correct}
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        Compare your answer with the correct translation and try again.
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Hints Panel */}
+            {showHint && (
+              <Card className="mb-4 bg-yellow-500/10 border-yellow-500/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Lightbulb className="h-4 w-4 text-yellow-400" />
+                    <span className="font-medium text-yellow-300 text-sm">Translation Hints</span>
+                  </div>
+                  <ul className="text-xs text-yellow-200 space-y-1">
+                    {currentSentence.hints.map((hint, index) => (
+                      <li key={index} className="flex items-start space-x-1">
+                        <span>•</span>
+                        <span>{hint}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Dictionary Lookup */}
+            {selectedWord && wordDefinition && (
+              <Card className="mb-4 bg-blue-500/10 border-blue-500/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <BookOpen className="h-4 w-4 text-blue-400" />
+                    <span className="font-medium text-blue-300 text-sm">Dictionary</span>
+                  </div>
+                  <div className="text-xs">
+                    <span className="text-blue-200 font-medium">{selectedWord}</span>
+                    <span className="text-slate-300 ml-2">{wordDefinition}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
 
-      <style jsx global>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          50% { transform: translateX(5px); }
-          75% { transform: translateX(-5px); }
-        }
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
-        .scrollbar-thin::-webkit-scrollbar {
-          width: 6px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-track {
-          background: rgba(79, 70, 229, 0.1);
-          border-radius: 10px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-          background: rgba(79, 70, 229, 0.5);
-          border-radius: 10px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-          background: rgba(79, 70, 229, 0.7);
-        }
-      `}</style>
+      {/* Bottom Panel - Stats & Tools */}
+      <div className="bg-slate-800/50 border-t border-slate-700/50 px-6 py-3">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <MessageSquare className="h-4 w-4 text-slate-400" />
+                <span className="text-xs text-slate-300">
+                  {completedSentences.size}/{sentences.length} sentences
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Target className="h-4 w-4 text-emerald-400" />
+                <span className="text-xs text-slate-300">{accuracy}% accuracy</span>
+              </div>
+            </div>
+            <div className="text-xs text-slate-400">Click on words in the Vietnamese text to see their translation</div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
