@@ -15,69 +15,57 @@ export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("english@test.com")
   const [password, setPassword] = useState("123456")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  // Mock accounts with predefined languages
-  const mockAccounts = [
-    {
-      email: "english@test.com",
-      password: "123456",
-      name: "John English",
-      preferredLanguage: "english",
-      avatar: "🇺🇸",
-    },
-    {
-      email: "japanese@test.com",
-      password: "123456",
-      name: "Tanaka Japanese",
-      preferredLanguage: "japanese",
-      avatar: "🇯🇵",
-    },
-    {
-      email: "admin@test.com",
-      password: "admin123",
-      name: "Admin User",
-      preferredLanguage: "both",
-      avatar: "👨‍💼",
-    },
-  ]
-
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError("")
 
-    // Find matching account
-    const account = mockAccounts.find((acc) => acc.email === email && acc.password === password)
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (account) {
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          email: account.email,
-          name: account.name,
-          preferredLanguage: account.preferredLanguage,
-          avatar: account.avatar,
-        }),
-      )
-      router.push("/dashboard")
-    } else {
-      alert("Email hoặc mật khẩu không đúng!")
+      const data = await response.json()
+
+      if (data.success) {
+        localStorage.setItem("user", JSON.stringify(data.user))
+        router.push("/dashboard")
+      } else {
+        setError(data.message)
+      }
+    } catch (error) {
+      setError("Có lỗi xảy ra. Vui lòng thử lại.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-slate-800/50 border-slate-700/50">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Globe className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold">LinguaLearn</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <Globe className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-slate-100">LinguaLearn</span>
           </div>
-          <CardTitle className="text-2xl">Đăng nhập</CardTitle>
-          <CardDescription>Đăng nhập để tiếp tục hành trình học ngôn ngữ</CardDescription>
+          <CardTitle className="text-2xl text-slate-100">Đăng nhập</CardTitle>
+          <CardDescription className="text-slate-400">Đăng nhập để tiếp tục hành trình học ngôn ngữ</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-slate-300">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -85,10 +73,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Mật khẩu</Label>
+              <Label htmlFor="password" className="text-slate-300">
+                Mật khẩu
+              </Label>
               <Input
                 id="password"
                 type="password"
@@ -96,20 +87,22 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400"
               />
             </div>
-            <Button type="submit" className="w-full">
-              Đăng nhập
+            {error && <div className="text-red-400 text-sm text-center">{error}</div>}
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
+              {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Chưa có tài khoản?{" "}
-            <Link href="/auth/register" className="text-blue-600 hover:underline">
+            <span className="text-slate-400">Chưa có tài khoản? </span>
+            <Link href="/auth/register" className="text-blue-400 hover:underline">
               Đăng ký ngay
             </Link>
           </div>
           <div className="mt-4 text-center">
-            <Link href="/" className="text-sm text-gray-600 hover:underline">
+            <Link href="/" className="text-sm text-slate-400 hover:underline">
               ← Về trang chủ
             </Link>
           </div>

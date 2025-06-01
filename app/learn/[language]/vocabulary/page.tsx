@@ -8,55 +8,47 @@ import Link from "next/link"
 import { useState, useEffect, useRef } from "react"
 import { useParams } from "next/navigation"
 
-const vocabularyData = {
-  english: [
-    { word: "Hello", translation: "Xin chào", pronunciation: "/həˈloʊ/", example: "Hello, how are you?" },
-    { word: "Thank you", translation: "Cảm ơn", pronunciation: "/θæŋk juː/", example: "Thank you for your help." },
-    {
-      word: "Good morning",
-      translation: "Chào buổi sáng",
-      pronunciation: "/ɡʊd ˈmɔːrnɪŋ/",
-      example: "Good morning, everyone!",
-    },
-    { word: "Beautiful", translation: "Đẹp", pronunciation: "/ˈbjuːtɪfəl/", example: "The sunset is beautiful." },
-    {
-      word: "Important",
-      translation: "Quan trọng",
-      pronunciation: "/ɪmˈpɔːrtənt/",
-      example: "This is very important.",
-    },
-    { word: "Family", translation: "Gia đình", pronunciation: "/ˈfæməli/", example: "I love my family." },
-    { word: "Friend", translation: "Bạn bè", pronunciation: "/frend/", example: "She is my best friend." },
-    { word: "School", translation: "Trường học", pronunciation: "/skuːl/", example: "I go to school every day." },
-    { word: "House", translation: "Ngôi nhà", pronunciation: "/haʊs/", example: "This is my house." },
-    { word: "Water", translation: "Nước", pronunciation: "/ˈwɔːtər/", example: "I drink water every day." },
-  ],
-  japanese: [
-    { word: "こんにちは", translation: "Xin chào", pronunciation: "Konnichiwa", example: "こんにちは、元気ですか？" },
-    { word: "ありがとう", translation: "Cảm ơn", pronunciation: "Arigatou", example: "ありがとうございます。" },
-    { word: "おはよう", translation: "Chào buổi sáng", pronunciation: "Ohayou", example: "おはようございます！" },
-    { word: "きれい", translation: "Đẹp", pronunciation: "Kirei", example: "この花はきれいです。" },
-    { word: "大切", translation: "Quan trọng", pronunciation: "Taisetsu", example: "これは大切なことです。" },
-    { word: "家族", translation: "Gia đình", pronunciation: "Kazoku", example: "家族が大好きです。" },
-    { word: "友達", translation: "Bạn bè", pronunciation: "Tomodachi", example: "彼は私の友達です。" },
-    { word: "学校", translation: "Trường học", pronunciation: "Gakkou", example: "毎日学校に行きます。" },
-    { word: "家", translation: "Ngôi nhà", pronunciation: "Ie", example: "これは私の家です。" },
-    { word: "水", translation: "Nước", pronunciation: "Mizu", example: "毎日水を飲みます。" },
-  ],
+interface VocabularyItem {
+  id: number
+  word: string
+  translation: string
+  pronunciation: string
+  example: string
 }
 
 export default function VocabularyPage() {
   const params = useParams()
   const language = params.language as string
+  const [vocabulary, setVocabulary] = useState<VocabularyItem[]>([])
   const [learnedWords, setLearnedWords] = useState<Set<number>>(new Set())
   const [timeSpent, setTimeSpent] = useState(0)
   const [points, setPoints] = useState(150)
   const [streak, setStreak] = useState(3)
+  const [isLoading, setIsLoading] = useState(true)
 
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const vocabulary = vocabularyData[language as keyof typeof vocabularyData] || vocabularyData.english
-  const progress = (learnedWords.size / vocabulary.length) * 100
+  const progress = vocabulary.length > 0 ? (learnedWords.size / vocabulary.length) * 100 : 0
+
+  // Fetch vocabulary data
+  useEffect(() => {
+    const fetchVocabulary = async () => {
+      try {
+        const response = await fetch(`/api/vocabulary/${language}`)
+        const data = await response.json()
+
+        if (data.success) {
+          setVocabulary(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching vocabulary:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchVocabulary()
+  }, [language])
 
   // Timer effect
   useEffect(() => {
@@ -71,15 +63,14 @@ export default function VocabularyPage() {
     }
   }, [])
 
-  const markAsLearned = (index: number) => {
-    if (!learnedWords.has(index)) {
-      setLearnedWords((prev) => new Set([...prev, index]))
+  const markAsLearned = (id: number) => {
+    if (!learnedWords.has(id)) {
+      setLearnedWords((prev) => new Set([...prev, id]))
       setPoints(points + 10)
     }
   }
 
   const playPronunciation = (word: string) => {
-    // Mock pronunciation - in real app, you'd use Web Speech API or audio files
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(word)
       utterance.lang = language === "english" ? "en-US" : "ja-JP"
@@ -102,6 +93,14 @@ export default function VocabularyPage() {
   const languageFlags = {
     english: "🇺🇸",
     japanese: "🇯🇵",
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400">Loading vocabulary...</div>
+      </div>
+    )
   }
 
   return (
@@ -181,11 +180,11 @@ export default function VocabularyPage() {
           </div>
 
           <div className="grid gap-4">
-            {vocabulary.map((item, index) => (
+            {vocabulary.map((item) => (
               <Card
-                key={index}
+                key={item.id}
                 className={`bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all ${
-                  learnedWords.has(index) ? "ring-2 ring-emerald-500/30 bg-emerald-500/10" : ""
+                  learnedWords.has(item.id) ? "ring-2 ring-emerald-500/30 bg-emerald-500/10" : ""
                 }`}
               >
                 <CardContent className="p-6">
@@ -207,7 +206,7 @@ export default function VocabularyPage() {
                       <p className="text-sm text-slate-400 italic">Example: {item.example}</p>
                     </div>
                     <div className="ml-4">
-                      {learnedWords.has(index) ? (
+                      {learnedWords.has(item.id) ? (
                         <Button
                           variant="outline"
                           className="text-emerald-400 border-emerald-500/30 bg-emerald-500/10"
@@ -217,7 +216,7 @@ export default function VocabularyPage() {
                           Learned
                         </Button>
                       ) : (
-                        <Button onClick={() => markAsLearned(index)} className="bg-blue-600 hover:bg-blue-700">
+                        <Button onClick={() => markAsLearned(item.id)} className="bg-blue-600 hover:bg-blue-700">
                           <CheckCircle className="h-4 w-4 mr-2" />
                           Mark as Learned
                         </Button>
