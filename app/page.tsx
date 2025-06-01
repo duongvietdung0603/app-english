@@ -14,6 +14,9 @@ export default function HomePage() {
             <h1 className="text-2xl font-bold text-gray-900">LinguaLearn</h1>
           </div>
           <div className="flex items-center space-x-4">
+            <Link href="/auth/demo-accounts">
+              <Button variant="ghost">Demo Accounts</Button>
+            </Link>
             <Link href="/auth/login">
               <Button variant="ghost">Đăng nhập</Button>
             </Link>

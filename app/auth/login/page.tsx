@@ -13,15 +13,53 @@ import { useState } from "react"
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState("your@email.com")
-  const [password, setPassword] = useState("1231232")
+  const [email, setEmail] = useState("english@test.com")
+  const [password, setPassword] = useState("123456")
+
+  // Mock accounts with predefined languages
+  const mockAccounts = [
+    {
+      email: "english@test.com",
+      password: "123456",
+      name: "John English",
+      preferredLanguage: "english",
+      avatar: "🇺🇸",
+    },
+    {
+      email: "japanese@test.com",
+      password: "123456",
+      name: "Tanaka Japanese",
+      preferredLanguage: "japanese",
+      avatar: "🇯🇵",
+    },
+    {
+      email: "admin@test.com",
+      password: "admin123",
+      name: "Admin User",
+      preferredLanguage: "both",
+      avatar: "👨‍💼",
+    },
+  ]
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    // Mock login - in real app, validate credentials
-    if (email && password) {
-      localStorage.setItem("user", JSON.stringify({ email, name: "Người dùng" }))
+
+    // Find matching account
+    const account = mockAccounts.find((acc) => acc.email === email && acc.password === password)
+
+    if (account) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: account.email,
+          name: account.name,
+          preferredLanguage: account.preferredLanguage,
+          avatar: account.avatar,
+        }),
+      )
       router.push("/dashboard")
+    } else {
+      alert("Email hoặc mật khẩu không đúng!")
     }
   }
 
