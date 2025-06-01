@@ -6,12 +6,14 @@ import { BookOpen, FileText, MessageSquare, LogOut, Globe, TrendingUp, Target, C
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useTranslation } from "@/app/contexts/language-context"
 
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<{ name: string; email: string; preferredLanguage: string; avatar: string } | null>(
     null,
   )
+  const { t } = useTranslation()
 
   useEffect(() => {
     const userData = localStorage.getItem("user")
@@ -35,8 +37,8 @@ export default function DashboardPage() {
         name: "English",
         flag: "🇺🇸",
         color: "emerald",
-        greeting: "Welcome back!",
-        description: "Continue your English learning journey",
+        greeting: t("dashboard.welcome_back"),
+        description: t("dashboard.english_learning_description"),
       }
     } else if (user.preferredLanguage === "japanese") {
       return {
@@ -51,8 +53,8 @@ export default function DashboardPage() {
         name: "Multi-language",
         flag: "🌍",
         color: "emerald",
-        greeting: "Welcome back!",
-        description: "Choose your language for today's learning",
+        greeting: t("dashboard.welcome_back"),
+        description: t("dashboard.choose_language_description"),
       }
     }
   }
@@ -90,7 +92,7 @@ export default function DashboardPage() {
               className="text-slate-400 hover:text-slate-100 hover:bg-slate-700/50"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              {t("dashboard.logout")}
             </Button>
           </div>
         </div>
@@ -112,7 +114,7 @@ export default function DashboardPage() {
         {user.preferredLanguage !== "both" ? (
           // Single Language Layout
           <div className="mb-12">
-            <h3 className="text-xl font-semibold mb-6 text-slate-200">Learning Activities</h3>
+            <h3 className="text-xl font-semibold mb-6 text-slate-200">{t("dashboard.learning_activities")}</h3>
             <div className="grid md:grid-cols-3 gap-6">
               <Link href={`/learn/${user.preferredLanguage}/vocabulary`}>
                 <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer h-full">
@@ -120,15 +122,15 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                       <BookOpen className="h-6 w-6 text-white" />
                     </div>
-                    <CardTitle className="text-lg text-slate-100">Vocabulary Learning</CardTitle>
+                    <CardTitle className="text-lg text-slate-100">{t("dashboard.vocabulary_learning")}</CardTitle>
                     <CardDescription className="text-slate-400">
-                      Expand your vocabulary with interactive flashcards
+                      {t("dashboard.vocabulary_description")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-400">127</div>
-                      <p className="text-sm text-slate-400">words learned</p>
+                      <p className="text-sm text-slate-400">{t("dashboard.words_learned")}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -140,15 +142,13 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                       <MessageSquare className="h-6 w-6 text-white" />
                     </div>
-                    <CardTitle className="text-lg text-slate-100">Sentence Translation</CardTitle>
-                    <CardDescription className="text-slate-400">
-                      Practice translating sentences accurately
-                    </CardDescription>
+                    <CardTitle className="text-lg text-slate-100">{t("dashboard.sentence_translation")}</CardTitle>
+                    <CardDescription className="text-slate-400">{t("dashboard.sentence_description")}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-emerald-400">45</div>
-                      <p className="text-sm text-slate-400">sentences today</p>
+                      <p className="text-sm text-slate-400">{t("dashboard.sentences_today")}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -160,15 +160,13 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                       <FileText className="h-6 w-6 text-white" />
                     </div>
-                    <CardTitle className="text-lg text-slate-100">Paragraph Translation</CardTitle>
-                    <CardDescription className="text-slate-400">
-                      Challenge yourself with complex paragraphs
-                    </CardDescription>
+                    <CardTitle className="text-lg text-slate-100">{t("dashboard.paragraph_translation")}</CardTitle>
+                    <CardDescription className="text-slate-400">{t("dashboard.paragraph_description")}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-purple-400">12</div>
-                      <p className="text-sm text-slate-400">paragraphs completed</p>
+                      <p className="text-sm text-slate-400">{t("dashboard.paragraphs_completed")}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -178,7 +176,7 @@ export default function DashboardPage() {
         ) : (
           // Multi Language Layout for Admin
           <div className="mb-12">
-            <h3 className="text-xl font-semibold mb-6 text-slate-200">Choose Your Language</h3>
+            <h3 className="text-xl font-semibold mb-6 text-slate-200">{t("dashboard.choose_your_language")}</h3>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer">
                 <CardHeader className="text-center">
@@ -193,7 +191,7 @@ export default function DashboardPage() {
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
                     >
                       <BookOpen className="h-4 w-4 mr-2" />
-                      Vocabulary Learning
+                      {t("dashboard.vocabulary_learning")}
                     </Button>
                   </Link>
                   <Link href="/practice/english/sentence-translation" className="block">
@@ -202,7 +200,7 @@ export default function DashboardPage() {
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
                     >
                       <MessageSquare className="h-4 w-4 mr-2" />
-                      Sentence Translation
+                      {t("dashboard.sentence_translation")}
                     </Button>
                   </Link>
                   <Link href="/practice/english/paragraph-translation" className="block">
@@ -211,7 +209,7 @@ export default function DashboardPage() {
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
                     >
                       <FileText className="h-4 w-4 mr-2" />
-                      Paragraph Translation
+                      {t("dashboard.paragraph_translation")}
                     </Button>
                   </Link>
                 </CardContent>
@@ -230,7 +228,7 @@ export default function DashboardPage() {
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
                     >
                       <BookOpen className="h-4 w-4 mr-2" />
-                      Vocabulary Learning
+                      {t("dashboard.vocabulary_learning")}
                     </Button>
                   </Link>
                   <Link href="/practice/japanese/sentence-translation" className="block">
@@ -239,7 +237,7 @@ export default function DashboardPage() {
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
                     >
                       <MessageSquare className="h-4 w-4 mr-2" />
-                      Sentence Translation
+                      {t("dashboard.sentence_translation")}
                     </Button>
                   </Link>
                   <Link href="/practice/japanese/paragraph-translation" className="block">
@@ -248,7 +246,7 @@ export default function DashboardPage() {
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
                     >
                       <FileText className="h-4 w-4 mr-2" />
-                      Paragraph Translation
+                      {t("dashboard.paragraph_translation")}
                     </Button>
                   </Link>
                 </CardContent>
@@ -259,44 +257,44 @@ export default function DashboardPage() {
 
         {/* Progress Overview */}
         <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-6 text-slate-200">Progress Overview</h3>
+          <h3 className="text-xl font-semibold mb-6 text-slate-200">{t("dashboard.progress_overview")}</h3>
           <div className="grid md:grid-cols-4 gap-6">
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-300">Current Streak</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-300">{t("dashboard.current_streak")}</CardTitle>
                 <TrendingUp className="h-4 w-4 text-orange-400" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-orange-400">7 days</div>
-                <p className="text-xs text-slate-400">Keep it up!</p>
+                <p className="text-xs text-slate-400">{t("dashboard.keep_it_up")}</p>
               </CardContent>
             </Card>
 
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-300">Accuracy</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-300">{t("dashboard.accuracy")}</CardTitle>
                 <Target className="h-4 w-4 text-emerald-400" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-emerald-400">85%</div>
-                <p className="text-xs text-slate-400">This week</p>
+                <p className="text-xs text-slate-400">{t("dashboard.this_week")}</p>
               </CardContent>
             </Card>
 
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-300">Study Time</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-300">{t("dashboard.study_time")}</CardTitle>
                 <Clock className="h-4 w-4 text-blue-400" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-400">2.5h</div>
-                <p className="text-xs text-slate-400">Today</p>
+                <p className="text-xs text-slate-400">{t("dashboard.today")}</p>
               </CardContent>
             </Card>
 
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-300">Level</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-300">{t("dashboard.level")}</CardTitle>
                 <Globe className="h-4 w-4 text-purple-400" />
               </CardHeader>
               <CardContent>
@@ -309,7 +307,7 @@ export default function DashboardPage() {
 
         {/* Recent Activity */}
         <div>
-          <h3 className="text-xl font-semibold mb-6 text-slate-200">Recent Activity</h3>
+          <h3 className="text-xl font-semibold mb-6 text-slate-200">{t("dashboard.recent_activity")}</h3>
           <Card className="bg-slate-800/50 border-slate-700/50">
             <CardContent className="p-6">
               <div className="space-y-4">

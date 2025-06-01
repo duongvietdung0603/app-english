@@ -1,0 +1,67 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "vocabulary": "Vocabulary",
+    "translation": "Translation",
+    "practice": "Practice",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "welcome": "Welcome back!",
+    "continue_learning": "Continue Learning",
+    "your_progress": "Your Progress",
+    "daily_goal": "Daily Goal",
+    "streak": "Streak",
+    "words_learned": "Words Learned",
+    "lessons_completed": "Lessons Completed",
+    "recent_activity": "Recent Activity",
+    "start_lesson": "Start Lesson",
+    "view_all": "View All"
+  },
+  "vocabulary": {
+    "title": "Vocabulary",
+    "new_words": "New Words",
+    "learned_words": "Learned Words",
+    "pronunciation": "Pronunciation",
+    "definition": "Definition",
+    "example": "Example",
+    "add_to_favorites": "Add to Favorites",
+    "practice_word": "Practice Word"
+  },
+  "translation": {
+    "title": "Sentence Translation",
+    "translate_sentence": "Translate this sentence",
+    "your_translation": "Your translation",
+    "send": "Send",
+    "correct": "Correct!",
+    "try_again": "Try again",
+    "hint": "Hint",
+    "next_sentence": "Next Sentence"
+  },
+  "practice": {
+    "title": "Practice",
+    "sentence_translation": "Sentence Translation",
+    "paragraph_translation": "Paragraph Translation",
+    "listening_practice": "Listening Practice",
+    "speaking_practice": "Speaking Practice",
+    "start_practice": "Start Practice",
+    "difficulty": "Difficulty",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "language": "Language",
+    "settings": "Settings"
+  }
+}

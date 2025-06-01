@@ -1,0 +1,67 @@
+{
+  "nav": {
+    "dashboard": "Bảng điều khiển",
+    "vocabulary": "Từ vựng",
+    "translation": "Dịch thuật",
+    "practice": "Luyện tập",
+    "profile": "Hồ sơ"
+  },
+  "dashboard": {
+    "welcome": "Chào mừng trở lại!",
+    "continue_learning": "Tiếp tục học",
+    "your_progress": "Tiến độ của bạn",
+    "daily_goal": "Mục tiêu hàng ngày",
+    "streak": "Chuỗi ngày",
+    "words_learned": "Từ đã học",
+    "lessons_completed": "Bài học đã hoàn thành",
+    "recent_activity": "Hoạt động gần đây",
+    "start_lesson": "Bắt đầu bài học",
+    "view_all": "Xem tất cả"
+  },
+  "vocabulary": {
+    "title": "Từ vựng",
+    "new_words": "Từ mới",
+    "learned_words": "Từ đã học",
+    "pronunciation": "Phát âm",
+    "definition": "Định nghĩa",
+    "example": "Ví dụ",
+    "add_to_favorites": "Thêm vào yêu thích",
+    "practice_word": "Luyện tập từ"
+  },
+  "translation": {
+    "title": "Dịch câu",
+    "translate_sentence": "Dịch câu này",
+    "your_translation": "Bản dịch của bạn",
+    "send": "Gửi",
+    "correct": "Chính xác!",
+    "try_again": "Thử lại",
+    "hint": "Gợi ý",
+    "next_sentence": "Câu tiếp theo"
+  },
+  "practice": {
+    "title": "Luyện tập",
+    "sentence_translation": "Dịch câu",
+    "paragraph_translation": "Dịch đoạn văn",
+    "listening_practice": "Luyện nghe",
+    "speaking_practice": "Luyện nói",
+    "start_practice": "Bắt đầu luyện tập",
+    "difficulty": "Độ khó",
+    "easy": "Dễ",
+    "medium": "Trung bình",
+    "hard": "Khó"
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "retry": "Thử lại",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước",
+    "finish": "Hoàn thành",
+    "language": "Ngôn ngữ",
+    "settings": "Cài đặt"
+  }
+}

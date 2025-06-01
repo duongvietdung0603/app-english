@@ -1,15 +1,9 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BookOpen, Globe, Users, Zap, ArrowRight } from 'lucide-react'
+import { BookOpen, Globe, Users, Zap, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { useTranslation } from "@/lib/i18n"
-import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function HomePage() {
-  const { t } = useTranslation()
-
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
       {/* Header */}
@@ -25,19 +19,18 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <LanguageSwitcher />
             <Link href="/auth/demo-accounts">
               <Button variant="ghost" className="text-slate-400 hover:text-slate-100 hover:bg-slate-700/50">
-                {t('navigation.demo_accounts')}
+                Demo Accounts
               </Button>
             </Link>
             <Link href="/auth/login">
               <Button variant="ghost" className="text-slate-400 hover:text-slate-100 hover:bg-slate-700/50">
-                {t('auth.login')}
+                Đăng nhập
               </Button>
             </Link>
             <Link href="/auth/register">
-              <Button className="bg-blue-600 hover:bg-blue-700">{t('auth.register')}</Button>
+              <Button className="bg-blue-600 hover:bg-blue-700">Đăng ký</Button>
             </Link>
           </div>
         </div>
@@ -49,15 +42,16 @@ export default function HomePage() {
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-5xl font-bold mb-6">
-              {t('homepage.title')} <span className="text-blue-400">{t('homepage.title_highlight')}</span>
+              Học ngôn ngữ mới một cách <span className="text-blue-400">thông minh</span>
             </h2>
             <p className="text-xl text-slate-300 mb-8">
-              {t('homepage.subtitle')}
+              Nền tảng học tiếng Anh và tiếng Nhật với phương pháp dịch thuật tương tác, giúp bạn nắm vững ngôn ngữ từ
+              cơ bản đến nâng cao.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/auth/register">
                 <Button size="lg" className="px-8 py-6 bg-blue-600 hover:bg-blue-700 text-lg">
-                  {t('homepage.start_learning')}
+                  Bắt đầu học ngay
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -67,7 +61,7 @@ export default function HomePage() {
                   size="lg"
                   className="px-8 py-6 border-slate-600 text-slate-300 hover:bg-slate-800 text-lg"
                 >
-                  {t('homepage.explore_courses')}
+                  Khám phá khóa học
                 </Button>
               </Link>
             </div>
@@ -78,18 +72,18 @@ export default function HomePage() {
       {/* Features */}
       <section className="py-20 bg-slate-800/30">
         <div className="container mx-auto px-6">
-          <h3 className="text-3xl font-bold text-center mb-12">{t('homepage.features_title')}</h3>
+          <h3 className="text-3xl font-bold text-center mb-12">Tính năng nổi bật</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all">
               <CardHeader>
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-4">
                   <BookOpen className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-slate-100">{t('homepage.feature_vocabulary')}</CardTitle>
+                <CardTitle className="text-slate-100">Học từ vựng</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-slate-400">
-                  {t('homepage.feature_vocabulary_desc')}
+                  Hệ thống từ vựng phong phú với các chủ đề đa dạng
                 </CardDescription>
               </CardContent>
             </Card>
@@ -99,11 +93,11 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-slate-100">{t('homepage.feature_translation')}</CardTitle>
+                <CardTitle className="text-slate-100">Dịch tương tác</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-slate-400">
-                  {t('homepage.feature_translation_desc')}
+                  Luyện tập dịch từ câu đơn đến đoạn văn phức tạp
                 </CardDescription>
               </CardContent>
             </Card>
@@ -113,11 +107,11 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-slate-100">{t('homepage.feature_feedback')}</CardTitle>
+                <CardTitle className="text-slate-100">Phản hồi thông minh</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-slate-400">
-                  {t('homepage.feature_feedback_desc')}
+                  Hệ thống đánh giá và gợi ý cải thiện tức thì
                 </CardDescription>
               </CardContent>
             </Card>
@@ -127,10 +121,10 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mb-4">
                   <Globe className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-slate-100">{t('homepage.feature_multilingual')}</CardTitle>
+                <CardTitle className="text-slate-100">Đa ngôn ngữ</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-slate-400">{t('homepage.feature_multilingual_desc')}</CardDescription>
+                <CardDescription className="text-slate-400">Hỗ trợ học tiếng Anh và tiếng Nhật</CardDescription>
               </CardContent>
             </Card>
           </div>
@@ -140,16 +134,16 @@ export default function HomePage() {
       {/* Languages */}
       <section className="py-20">
         <div className="container mx-auto px-6">
-          <h3 className="text-3xl font-bold text-center mb-12">{t('homepage.supported_languages')}</h3>
+          <h3 className="text-3xl font-bold text-center mb-12">Ngôn ngữ được hỗ trợ</h3>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all text-center">
               <CardHeader>
                 <div className="text-6xl mb-4">🇺🇸</div>
-                <CardTitle className="text-2xl text-slate-100">{t('homepage.english_title')}</CardTitle>
+                <CardTitle className="text-2xl text-slate-100">Tiếng Anh</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-slate-400 text-lg">
-                  {t('homepage.english_desc')}
+                  Học tiếng Anh từ cơ bản đến nâng cao với phương pháp dịch thuật hiệu quả
                 </CardDescription>
               </CardContent>
             </Card>
@@ -157,11 +151,11 @@ export default function HomePage() {
             <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all text-center">
               <CardHeader>
                 <div className="text-6xl mb-4">🇯🇵</div>
-                <CardTitle className="text-2xl text-slate-100">{t('homepage.japanese_title')}</CardTitle>
+                <CardTitle className="text-2xl text-slate-100">Tiếng Nhật</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-slate-400 text-lg">
-                  {t('homepage.japanese_desc')}
+                  Khám phá tiếng Nhật với hệ thống học tập tương tác và thú vị
                 </CardDescription>
               </CardContent>
             </Card>
@@ -178,7 +172,7 @@ export default function HomePage() {
             </div>
             <span className="text-xl font-bold text-slate-100">LinguaLearn</span>
           </div>
-          <p className="text-slate-400">© 2024 LinguaLearn. {t('homepage.footer_text')}</p>
+          <p className="text-slate-400">© 2024 LinguaLearn. Nền tảng học ngôn ngữ thông minh.</p>
         </div>
       </footer>
     </div>

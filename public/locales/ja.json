@@ -1,0 +1,67 @@
+{
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "vocabulary": "語彙",
+    "translation": "翻訳",
+    "practice": "練習",
+    "profile": "プロフィール"
+  },
+  "dashboard": {
+    "welcome": "おかえりなさい！",
+    "continue_learning": "学習を続ける",
+    "your_progress": "あなたの進歩",
+    "daily_goal": "日々の目標",
+    "streak": "連続日数",
+    "words_learned": "学習した単語",
+    "lessons_completed": "完了したレッスン",
+    "recent_activity": "最近の活動",
+    "start_lesson": "レッスンを始める",
+    "view_all": "すべて表示"
+  },
+  "vocabulary": {
+    "title": "語彙",
+    "new_words": "新しい単語",
+    "learned_words": "学習済み単語",
+    "pronunciation": "発音",
+    "definition": "定義",
+    "example": "例",
+    "add_to_favorites": "お気に入りに追加",
+    "practice_word": "単語を練習"
+  },
+  "translation": {
+    "title": "文章翻訳",
+    "translate_sentence": "この文を翻訳してください",
+    "your_translation": "あなたの翻訳",
+    "send": "送信",
+    "correct": "正解！",
+    "try_again": "もう一度",
+    "hint": "ヒント",
+    "next_sentence": "次の文"
+  },
+  "practice": {
+    "title": "練習",
+    "sentence_translation": "文章翻訳",
+    "paragraph_translation": "段落翻訳",
+    "listening_practice": "リスニング練習",
+    "speaking_practice": "スピーキング練習",
+    "start_practice": "練習を始める",
+    "difficulty": "難易度",
+    "easy": "簡単",
+    "medium": "普通",
+    "hard": "難しい"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "retry": "再試行",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "finish": "完了",
+    "language": "言語",
+    "settings": "設定"
+  }
+}
