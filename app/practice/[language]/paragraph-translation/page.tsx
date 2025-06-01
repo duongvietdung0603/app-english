@@ -339,36 +339,105 @@ export default function ParagraphTranslationPage() {
               </div>
             </div>
 
-            {/* Mini Progress Map */}
+            {/* Translation Input Area - Moved here */}
             <div className="mt-6 bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
-              <h5 className="text-sm font-medium text-slate-300 mb-3">Progress Map</h5>
-              <div className="grid grid-cols-6 gap-2">
-                {paragraphInfo.sentences.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`h-8 rounded flex items-center justify-center text-xs font-medium transition-all duration-300 ${
-                      completedSentences.has(index)
-                        ? "bg-emerald-500 text-white"
-                        : index === currentSentenceIndex
-                          ? "bg-pink-500 text-white"
-                          : "bg-slate-700 text-slate-400"
+              <h5 className="text-sm font-medium text-slate-300 mb-3">Your Translation</h5>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-400">
+                    Translate to {languageNames[language as keyof typeof languageNames]}:
+                  </label>
+                  {showHint && (
+                    <div className="flex items-center space-x-1 text-xs text-yellow-400">
+                      <Lightbulb className="h-3 w-3" />
+                      <span>Hint active</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <textarea
+                    ref={textareaRef}
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder={`Type your ${languageNames[language as keyof typeof languageNames]} translation here...`}
+                    className="w-full min-h-[100px] max-h-[200px] bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 resize-none text-sm"
+                    disabled={showResult && isCorrect}
+                  />
+
+                  {/* Word count */}
+                  <div className="absolute bottom-2 right-2 text-xs text-slate-500">
+                    {userAnswer.split(" ").filter((word) => word.length > 0).length} words
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowHint(!showHint)}
+                      className="border-slate-600 text-slate-300 hover:bg-slate-700/50 text-xs"
+                    >
+                      <Lightbulb className="h-3 w-3 mr-1" />
+                      {showHint ? "Hide Hint" : "Show Hint"}
+                    </Button>
+
+                    {showResult && !isCorrect && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={tryAgain}
+                        className="border-slate-600 text-slate-300 hover:bg-slate-700/50 text-xs"
+                      >
+                        <RotateCcw className="h-3 w-3 mr-1" />
+                        Try Again
+                      </Button>
+                    )}
+                  </div>
+
+                  <Button
+                    onClick={showResult && isCorrect ? nextSentence : checkAnswer}
+                    disabled={!userAnswer.trim() && !showResult}
+                    size="sm"
+                    className={`text-xs ${
+                      showResult && isCorrect ? "bg-emerald-600 hover:bg-emerald-700" : "bg-blue-600 hover:bg-blue-700"
                     }`}
                   >
-                    {index + 1}
-                  </div>
-                ))}
+                    {showResult && isCorrect ? (
+                      currentSentenceIndex < paragraphInfo.sentences.length - 1 ? (
+                        <>
+                          Next
+                          <ArrowLeft className="h-3 w-3 ml-1 rotate-180" />
+                        </>
+                      ) : (
+                        <>
+                          Complete
+                          <CheckCircle2 className="h-3 w-3 ml-1" />
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <Send className="h-3 w-3 mr-1" />
+                        Submit
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Panel - Translation Workspace */}
+        {/* Right Panel - Current Sentence & Feedback */}
         <div className="w-1/2 flex flex-col">
           <div className="bg-slate-800/30 px-6 py-3 border-b border-slate-700/30">
-            <h3 className="text-sm font-medium text-slate-300">Translation Workspace</h3>
+            <h3 className="text-sm font-medium text-slate-300">Current Sentence</h3>
           </div>
 
-          <div className="flex-1 p-6 flex flex-col">
+          <div className="flex-1 p-6 overflow-y-auto">
             {/* Current Sentence */}
             <Card className="bg-slate-800/50 border-slate-700/50 mb-4">
               <CardContent className="p-4">
@@ -443,37 +512,10 @@ export default function ParagraphTranslationPage() {
               </Card>
             )}
 
-            {/* Translation Input */}
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-slate-300">Your Translation:</label>
-                {showHint && (
-                  <div className="flex items-center space-x-1 text-xs text-yellow-400">
-                    <Lightbulb className="h-3 w-3" />
-                    <span>Hint active</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex-1 relative">
-                <textarea
-                  ref={textareaRef}
-                  value={userAnswer}
-                  onChange={(e) => setUserAnswer(e.target.value)}
-                  placeholder={`Type your ${languageNames[language as keyof typeof languageNames]} translation here...`}
-                  className="w-full h-full min-h-[120px] bg-slate-800/50 border border-slate-700/50 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 resize-none"
-                  disabled={showResult && isCorrect}
-                />
-
-                {/* Word count */}
-                <div className="absolute bottom-3 right-3 text-xs text-slate-500">
-                  {userAnswer.split(" ").filter((word) => word.length > 0).length} words
-                </div>
-              </div>
-
-              {/* Hints Panel */}
-              {showHint && (
-                <div className="mt-3 p-3 rounded-lg border bg-yellow-500/10 border-yellow-500/30">
+            {/* Hints Panel */}
+            {showHint && (
+              <Card className="mb-4 bg-yellow-500/10 border-yellow-500/30">
+                <CardContent className="p-4">
                   <div className="flex items-center space-x-2 mb-2">
                     <Lightbulb className="h-4 w-4 text-yellow-400" />
                     <span className="font-medium text-yellow-300 text-sm">Translation Hints</span>
@@ -486,12 +528,14 @@ export default function ParagraphTranslationPage() {
                       </li>
                     ))}
                   </ul>
-                </div>
-              )}
+                </CardContent>
+              </Card>
+            )}
 
-              {/* Dictionary Lookup */}
-              {selectedWord && wordDefinition && (
-                <div className="mt-3 p-3 rounded-lg border bg-blue-500/10 border-blue-500/30">
+            {/* Dictionary Lookup */}
+            {selectedWord && wordDefinition && (
+              <Card className="mb-4 bg-blue-500/10 border-blue-500/30">
+                <CardContent className="p-4">
                   <div className="flex items-center space-x-2 mb-1">
                     <BookOpen className="h-4 w-4 text-blue-400" />
                     <span className="font-medium text-blue-300 text-sm">Dictionary</span>
@@ -500,63 +544,9 @@ export default function ParagraphTranslationPage() {
                     <span className="text-blue-200 font-medium">{selectedWord}</span>
                     <span className="text-slate-300 ml-2">{wordDefinition}</span>
                   </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowHint(!showHint)}
-                    className="border-slate-600 text-slate-300 hover:bg-slate-700/50"
-                  >
-                    <Lightbulb className="h-4 w-4 mr-2" />
-                    {showHint ? "Hide Hint" : "Show Hint"}
-                  </Button>
-
-                  {showResult && !isCorrect && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={tryAgain}
-                      className="border-slate-600 text-slate-300 hover:bg-slate-700/50"
-                    >
-                      <RotateCcw className="h-4 w-4 mr-2" />
-                      Try Again
-                    </Button>
-                  )}
-                </div>
-
-                <Button
-                  onClick={showResult && isCorrect ? nextSentence : checkAnswer}
-                  disabled={!userAnswer.trim() && !showResult}
-                  className={`px-6 ${
-                    showResult && isCorrect ? "bg-emerald-600 hover:bg-emerald-700" : "bg-blue-600 hover:bg-blue-700"
-                  }`}
-                >
-                  {showResult && isCorrect ? (
-                    currentSentenceIndex < paragraphInfo.sentences.length - 1 ? (
-                      <>
-                        Next Sentence
-                        <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />
-                      </>
-                    ) : (
-                      <>
-                        Complete
-                        <CheckCircle2 className="h-4 w-4 ml-2" />
-                      </>
-                    )
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4 mr-2" />
-                      Submit Translation
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
