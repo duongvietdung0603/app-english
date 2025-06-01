@@ -114,15 +114,15 @@ export default function DashboardPage() {
           <div className="mb-12">
             <h3 className="text-xl font-semibold mb-6 text-slate-200">Learning Activities</h3>
             <div className="grid md:grid-cols-3 gap-6">
-              <Link href={`/learn/${user.preferredLanguage}/vocabulary`}>
+              <Link href={`/learn/${user.preferredLanguage}/topics`}>
                 <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer h-full">
                   <CardHeader className="text-center">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                       <BookOpen className="h-6 w-6 text-white" />
                     </div>
-                    <CardTitle className="text-lg text-slate-100">Vocabulary Learning</CardTitle>
+                    <CardTitle className="text-lg text-slate-100">Learning Topics</CardTitle>
                     <CardDescription className="text-slate-400">
-                      Expand your vocabulary with interactive flashcards
+                      Choose from various topics to expand your vocabulary
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -187,7 +187,7 @@ export default function DashboardPage() {
                   <CardDescription className="text-slate-400">English Learning Path</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Link href="/learn/english/vocabulary" className="block">
+                  <Link href="/learn/english/topics" className="block">
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
@@ -224,7 +224,7 @@ export default function DashboardPage() {
                   <CardDescription className="text-slate-400">Japanese Learning Path</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Link href="/learn/japanese/vocabulary" className="block">
+                  <Link href="/learn/japanese/topics" className="block">
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
