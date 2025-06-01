@@ -21,71 +21,11 @@ import Link from "next/link"
 import { useState, useRef, useEffect } from "react"
 import { useParams } from "next/navigation"
 
-const sentenceData = {
-  english: [
-    {
-      vietnamese: "Tôi đang học tiếng Anh.",
-      correct: "I am learning English.",
-      hints: ["Sử dụng thì hiện tại tiếp diễn", "Chủ ngữ là 'I'"],
-    },
-    {
-      vietnamese: "Hôm nay trời đẹp quá.",
-      correct: "The weather is beautiful today.",
-      hints: ["'Trời' có thể dịch là 'weather'", "Sử dụng 'beautiful' cho 'đẹp'"],
-    },
-    {
-      vietnamese: "Tôi muốn uống cà phê.",
-      correct: "I want to drink coffee.",
-      hints: ["Sử dụng 'want to' cho 'muốn'", "'uống' là 'drink'"],
-    },
-    {
-      vietnamese: "Cô ấy là một giáo viên.",
-      correct: "She is a teacher.",
-      hints: ["'Cô ấy' là 'She'", "Sử dụng 'a' trước nghề nghiệp"],
-    },
-    {
-      vietnamese: "Chúng tôi sống ở Việt Nam.",
-      correct: "We live in Vietnam.",
-      hints: ["'Chúng tôi' là 'We'", "Sử dụng 'in' cho tên quốc gia"],
-    },
-    {
-      vietnamese: "Anh ấy thích đọc sách.",
-      correct: "He likes reading books.",
-      hints: ["'Anh ấy' là 'He'", "'thích' là 'like'"],
-    },
-  ],
-  japanese: [
-    {
-      vietnamese: "Tôi đang học tiếng Nhật.",
-      correct: "私は日本語を勉強しています。",
-      hints: ["私 (watashi) = tôi", "勉強 (benkyou) = học"],
-    },
-    {
-      vietnamese: "Hôm nay trời đẹp quá.",
-      correct: "今日はとてもいい天気です。",
-      hints: ["今日 (kyou) = hôm nay", "いい天気 (ii tenki) = thời tiết đẹp"],
-    },
-    {
-      vietnamese: "Tôi muốn uống cà phê.",
-      correct: "コーヒーを飲みたいです。",
-      hints: ["コーヒー (koohii) = cà phê", "飲みたい (nomitai) = muốn uống"],
-    },
-    {
-      vietnamese: "Cô ấy là một giáo viên.",
-      correct: "彼女は先生です。",
-      hints: ["彼女 (kanojo) = cô ấy", "先生 (sensei) = giáo viên"],
-    },
-    {
-      vietnamese: "Chúng tôi sống ở Việt Nam.",
-      correct: "私たちはベトナムに住んでいます。",
-      hints: ["私たち (watashitachi) = chúng tôi", "住む (sumu) = sống"],
-    },
-    {
-      vietnamese: "Anh ấy thích đọc sách.",
-      correct: "彼は本を読むのが好きです。",
-      hints: ["彼 (kare) = anh ấy", "好き (suki) = thích"],
-    },
-  ],
+interface SentenceData {
+  id: number
+  vietnamese: string
+  correct: string
+  hints: string[]
 }
 
 interface ChatMessage {
@@ -100,6 +40,7 @@ interface ChatMessage {
 export default function SentenceTranslationPage() {
   const params = useParams()
   const language = params.language as string
+  const [sentences, setSentences] = useState<SentenceData[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userAnswer, setUserAnswer] = useState("")
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -110,19 +51,39 @@ export default function SentenceTranslationPage() {
   const [streak, setStreak] = useState(5)
   const [timeSpent, setTimeSpent] = useState(0)
   const [isWaitingForAnswer, setIsWaitingForAnswer] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const sentences = sentenceData[language as keyof typeof sentenceData] || sentenceData.english
   const currentSentence = sentences[currentIndex]
-  const progress = ((currentIndex + 1) / sentences.length) * 100
+  const progress = sentences.length > 0 ? ((currentIndex + 1) / sentences.length) * 100 : 0
   const accuracy = completedSentences.size > 0 ? Math.round((completedSentences.size / (currentIndex + 1)) * 100) : 100
+
+  // Fetch sentences data
+  useEffect(() => {
+    const fetchSentences = async () => {
+      try {
+        const response = await fetch(`/api/sentences/${language}`)
+        const data = await response.json()
+
+        if (data.success) {
+          setSentences(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching sentences:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSentences()
+  }, [language])
 
   // Initialize chat with first sentence
   useEffect(() => {
-    if (messages.length === 0) {
+    if (sentences.length > 0 && messages.length === 0) {
       setMessages([
         {
           id: "1",
@@ -139,7 +100,7 @@ export default function SentenceTranslationPage() {
       ])
       setIsWaitingForAnswer(true)
     }
-  }, [])
+  }, [sentences, messages.length, language, currentSentence])
 
   // Timer effect
   useEffect(() => {
@@ -177,7 +138,7 @@ export default function SentenceTranslationPage() {
   }
 
   const checkAnswer = () => {
-    if (!userAnswer.trim()) return
+    if (!userAnswer.trim() || !currentSentence) return
 
     // Add user message
     addMessage({
@@ -231,6 +192,8 @@ export default function SentenceTranslationPage() {
   }
 
   const requestHint = () => {
+    if (!currentSentence) return
+
     addMessage({
       type: "user",
       content: "Can you give me a hint?",
@@ -248,6 +211,8 @@ export default function SentenceTranslationPage() {
   }
 
   const tryAgain = () => {
+    if (!currentSentence) return
+
     addMessage({
       type: "user",
       content: "Let me try again",
@@ -280,6 +245,22 @@ export default function SentenceTranslationPage() {
         checkAnswer()
       }
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400">Loading sentences...</div>
+      </div>
+    )
+  }
+
+  if (sentences.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400">No sentences found for this language.</div>
+      </div>
+    )
   }
 
   return (

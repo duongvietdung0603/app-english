@@ -22,82 +22,22 @@ import Link from "next/link"
 import { useState, useRef, useEffect } from "react"
 import { useParams } from "next/navigation"
 
-const paragraphData = {
-  english: {
-    title: "My Daily Routine",
-    sentences: [
-      {
-        vietnamese: "Tôi thức dậy lúc 6 giờ sáng.",
-        correct: "I wake up at 6 AM.",
-        hints: ["'thức dậy' là 'wake up'", "Sử dụng 'at' cho thời gian cụ thể"],
-      },
-      {
-        vietnamese: "Sau đó tôi đánh răng và rửa mặt.",
-        correct: "Then I brush my teeth and wash my face.",
-        hints: ["'đánh răng' là 'brush teeth'", "'rửa mặt' là 'wash face'"],
-      },
-      {
-        vietnamese: "Tôi ăn sáng với gia đình.",
-        correct: "I have breakfast with my family.",
-        hints: ["'ăn sáng' là 'have breakfast'", "'với' là 'with'"],
-      },
-      {
-        vietnamese: "Sau đó tôi đi làm bằng xe buýt.",
-        correct: "Then I go to work by bus.",
-        hints: ["'đi làm' là 'go to work'", "'bằng xe buýt' là 'by bus'"],
-      },
-      {
-        vietnamese: "Tôi làm việc từ 8 giờ sáng đến 5 giờ chiều.",
-        correct: "I work from 8 AM to 5 PM.",
-        hints: ["'làm việc' là 'work'", "'từ...đến' là 'from...to'"],
-      },
-      {
-        vietnamese: "Cuối cùng, tôi về nhà và nghỉ ngơi.",
-        correct: "Finally, I go home and rest.",
-        hints: ["'cuối cùng' là 'finally'", "'nghỉ ngơi' là 'rest'"],
-      },
-    ],
-  },
-  japanese: {
-    title: "私の一日",
-    sentences: [
-      {
-        vietnamese: "Tôi thức dậy lúc 6 giờ sáng.",
-        correct: "私は朝6時に起きます。",
-        hints: ["私 (watashi) = tôi", "起きます (okimasu) = thức dậy"],
-      },
-      {
-        vietnamese: "Sau đó tôi đánh răng và rửa mặt.",
-        correct: "それから歯を磨いて、顔を洗います。",
-        hints: ["それから = sau đó", "歯を磨く = đánh răng"],
-      },
-      {
-        vietnamese: "Tôi ăn sáng với gia đình.",
-        correct: "家族と朝ごはんを食べます。",
-        hints: ["家族 (kazoku) = gia đình", "朝ごはん = bữa sáng"],
-      },
-      {
-        vietnamese: "Sau đó tôi đi làm bằng xe buýt.",
-        correct: "それからバスで会社に行きます。",
-        hints: ["バス = xe buýt", "会社 (kaisha) = công ty"],
-      },
-      {
-        vietnamese: "Tôi làm việc từ 8 giờ sáng đến 5 giờ chiều.",
-        correct: "私は朝8時から夕方5時まで働きます。",
-        hints: ["働きます (hatarakimasu) = làm việc", "から...まで = từ...đến"],
-      },
-      {
-        vietnamese: "Cuối cùng, tôi về nhà và nghỉ ngơi.",
-        correct: "最後に、家に帰って休みます。",
-        hints: ["最後に (saigo ni) = cuối cùng", "休みます (yasumimasu) = nghỉ ngơi"],
-      },
-    ],
-  },
+interface ParagraphSentence {
+  id: number
+  vietnamese: string
+  correct: string
+  hints: string[]
+}
+
+interface ParagraphData {
+  title: string
+  sentences: ParagraphSentence[]
 }
 
 export default function ParagraphTranslationPage() {
   const params = useParams()
   const language = params.language as string
+  const [paragraphInfo, setParagraphInfo] = useState<ParagraphData | null>(null)
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0)
   const [userAnswer, setUserAnswer] = useState("")
   const [showResult, setShowResult] = useState(false)
@@ -111,15 +51,35 @@ export default function ParagraphTranslationPage() {
   const [timeSpent, setTimeSpent] = useState(0)
   const [selectedWord, setSelectedWord] = useState<string | null>(null)
   const [wordDefinition, setWordDefinition] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const paragraphInfo = paragraphData[language as keyof typeof paragraphData] || paragraphData.english
-  const currentSentence = paragraphInfo.sentences[currentSentenceIndex]
-  const progress = ((currentSentenceIndex + 1) / paragraphInfo.sentences.length) * 100
+  const currentSentence = paragraphInfo?.sentences[currentSentenceIndex]
+  const progress = paragraphInfo ? ((currentSentenceIndex + 1) / paragraphInfo.sentences.length) * 100 : 0
   const accuracy =
     completedSentences.size > 0 ? Math.round((completedSentences.size / (currentSentenceIndex + 1)) * 100) : 100
+
+  // Fetch paragraph data
+  useEffect(() => {
+    const fetchParagraph = async () => {
+      try {
+        const response = await fetch(`/api/paragraphs/${language}`)
+        const data = await response.json()
+
+        if (data.success) {
+          setParagraphInfo(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching paragraph:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchParagraph()
+  }, [language])
 
   // Timer effect
   useEffect(() => {
@@ -143,6 +103,8 @@ export default function ParagraphTranslationPage() {
   }, [userAnswer])
 
   const checkAnswer = () => {
+    if (!currentSentence) return
+
     const correct = userAnswer.trim().toLowerCase() === currentSentence.correct.toLowerCase()
     setIsCorrect(correct)
     setShowResult(true)
@@ -155,7 +117,7 @@ export default function ParagraphTranslationPage() {
   }
 
   const nextSentence = () => {
-    if (currentSentenceIndex < paragraphInfo.sentences.length - 1) {
+    if (paragraphInfo && currentSentenceIndex < paragraphInfo.sentences.length - 1) {
       setCurrentSentenceIndex(currentSentenceIndex + 1)
       setUserAnswer("")
       setShowResult(false)
@@ -170,6 +132,8 @@ export default function ParagraphTranslationPage() {
   }
 
   const renderParagraph = () => {
+    if (!paragraphInfo) return null
+
     return paragraphInfo.sentences.map((sentence, index) => {
       let displayText = sentence.vietnamese
       let textColor = "text-gray-400"
@@ -243,6 +207,22 @@ export default function ParagraphTranslationPage() {
   const languageFlags = {
     english: "🇺🇸",
     japanese: "🇯🇵",
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400">Loading paragraph...</div>
+      </div>
+    )
+  }
+
+  if (!paragraphInfo) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400">No paragraph found for this language.</div>
+      </div>
+    )
   }
 
   return (
@@ -339,7 +319,7 @@ export default function ParagraphTranslationPage() {
               </div>
             </div>
 
-            {/* Translation Input Area - Moved here */}
+            {/* Translation Input Area */}
             <div className="mt-6 bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
               <h5 className="text-sm font-medium text-slate-300 mb-3">Your Translation</h5>
 
@@ -439,33 +419,35 @@ export default function ParagraphTranslationPage() {
 
           <div className="flex-1 p-6 overflow-y-auto">
             {/* Current Sentence */}
-            <Card className="bg-slate-800/50 border-slate-700/50 mb-4">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-slate-400 bg-slate-700/50 px-2 py-1 rounded">
-                    SENTENCE {currentSentenceIndex + 1}
-                  </span>
-                  <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-100">
-                    <Volume2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div
-                  className="text-lg text-pink-400 bg-pink-500/10 p-3 rounded-lg cursor-pointer"
-                  onClick={(e) => {
-                    const target = e.target as HTMLElement
-                    if (target.textContent) {
-                      const words = target.textContent.split(" ")
-                      const clickedWord = words.find((word) => target.textContent!.includes(word))
-                      if (clickedWord) handleWordClick(clickedWord)
-                    }
-                  }}
-                >
-                  "{currentSentence.vietnamese}"
-                </div>
-              </CardContent>
-            </Card>
+            {currentSentence && (
+              <Card className="bg-slate-800/50 border-slate-700/50 mb-4">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-slate-400 bg-slate-700/50 px-2 py-1 rounded">
+                      SENTENCE {currentSentenceIndex + 1}
+                    </span>
+                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-100">
+                      <Volume2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div
+                    className="text-lg text-pink-400 bg-pink-500/10 p-3 rounded-lg cursor-pointer"
+                    onClick={(e) => {
+                      const target = e.target as HTMLElement
+                      if (target.textContent) {
+                        const words = target.textContent.split(" ")
+                        const clickedWord = words.find((word) => target.textContent!.includes(word))
+                        if (clickedWord) handleWordClick(clickedWord)
+                      }
+                    }}
+                  >
+                    "{currentSentence.vietnamese}"
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-            {/* Feedback Section - Enhanced */}
+            {/* Feedback Section */}
             {showResult && (
               <Card
                 className={`mb-4 ${
@@ -500,9 +482,11 @@ export default function ParagraphTranslationPage() {
                       <div className="text-sm text-red-200">
                         Your translation needs some adjustments. Try again with the correct answer below:
                       </div>
-                      <div className="bg-slate-800/50 p-2 rounded text-slate-200 font-medium border-l-2 border-red-500">
-                        {currentSentence.correct}
-                      </div>
+                      {currentSentence && (
+                        <div className="bg-slate-800/50 p-2 rounded text-slate-200 font-medium border-l-2 border-red-500">
+                          {currentSentence.correct}
+                        </div>
+                      )}
                       <div className="text-xs text-slate-400">
                         Compare your answer with the correct translation and try again.
                       </div>
@@ -513,7 +497,7 @@ export default function ParagraphTranslationPage() {
             )}
 
             {/* Hints Panel */}
-            {showHint && (
+            {showHint && currentSentence && (
               <Card className="mb-4 bg-yellow-500/10 border-yellow-500/30">
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-2 mb-2">
