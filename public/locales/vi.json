@@ -19,6 +19,7 @@
     "back_home": "← Về trang chủ"
   },
   "homepage": {
+    "platform_subtitle": "Nền tảng học ngôn ngữ",
     "hero_title": "Học ngôn ngữ mới một cách",
     "hero_smart": "thông minh",
     "hero_description": "Nền tảng học tiếng Anh và tiếng Nhật với phương pháp dịch thuật tương tác, giúp bạn nắm vững ngôn ngữ từ cơ bản đến nâng cao.",
@@ -34,8 +35,11 @@
     "multilingual": "Đa ngôn ngữ",
     "multilingual_desc": "Hỗ trợ học tiếng Anh và tiếng Nhật",
     "supported_languages": "Ngôn ngữ được hỗ trợ",
+    "english_title": "Tiếng Anh",
     "english_desc": "Học tiếng Anh từ cơ bản đến nâng cao với phương pháp dịch thuật hiệu quả",
-    "japanese_desc": "Khám phá tiếng Nhật với hệ thống học tập tương tác và thú vị"
+    "japanese_title": "Tiếng Nhật",
+    "japanese_desc": "Khám phá tiếng Nhật với hệ thống học tập tương tác và thú vị",
+    "footer_text": "© 2024 LinguaLearn. Nền tảng học ngôn ngữ thông minh."
   },
   "dashboard": {
     "welcome": "Chào mừng trở lại!",
@@ -58,6 +62,8 @@
     "sentences_today": "câu hôm nay",
     "paragraphs_completed": "đoạn văn đã hoàn thành",
     "choose_your_language": "Chọn ngôn ngữ của bạn",
+    "choose_language_description": "Chọn ngôn ngữ học tập ưa thích",
+    "english_learning_description": "Tiếp tục hành trình học tiếng Anh",
     "progress_overview": "Tổng quan tiến độ",
     "current_streak": "Chuỗi ngày hiện tại",
     "keep_it_up": "Tiếp tục phát huy!",

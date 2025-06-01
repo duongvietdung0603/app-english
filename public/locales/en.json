@@ -19,6 +19,7 @@
     "back_home": "← Back to home"
   },
   "homepage": {
+    "platform_subtitle": "Language Learning Platform",
     "hero_title": "Learn new languages",
     "hero_smart": "smartly",
     "hero_description": "English and Japanese learning platform with interactive translation methods, helping you master languages from basic to advanced.",
@@ -34,8 +35,11 @@
     "multilingual": "Multilingual",
     "multilingual_desc": "Support for English and Japanese learning",
     "supported_languages": "Supported Languages",
+    "english_title": "English",
     "english_desc": "Learn English from basic to advanced with effective translation methods",
-    "japanese_desc": "Discover Japanese with interactive and interesting learning system"
+    "japanese_title": "Japanese",
+    "japanese_desc": "Discover Japanese with interactive and interesting learning system",
+    "footer_text": "© 2024 LinguaLearn. Smart language learning platform."
   },
   "dashboard": {
     "welcome": "Welcome back!",
@@ -58,6 +62,8 @@
     "sentences_today": "sentences today",
     "paragraphs_completed": "paragraphs completed",
     "choose_your_language": "Choose Your Language",
+    "choose_language_description": "Select your preferred learning language",
+    "english_learning_description": "Continue your English learning journey",
     "progress_overview": "Progress Overview",
     "current_streak": "Current Streak",
     "keep_it_up": "Keep it up!",

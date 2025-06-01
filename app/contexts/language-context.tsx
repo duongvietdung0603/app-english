@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
+import { useRouter, usePathname } from "next/navigation"
 
 type Language = "en" | "vi" | "ja"
 
@@ -16,20 +17,18 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 interface LanguageProviderProps {
   children: React.ReactNode
-  defaultLanguage?: Language
+  locale: Language
 }
 
-export function LanguageProvider({ children, defaultLanguage = "en" }: LanguageProviderProps) {
-  const [language, setLanguage] = useState<Language>(defaultLanguage)
+export function LanguageProvider({ children, locale }: LanguageProviderProps) {
+  const [language, setLanguageState] = useState<Language>(locale)
   const [translations, setTranslations] = useState<Record<string, any>>({})
+  const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
-    // Load saved language from localStorage
-    const savedLanguage = localStorage.getItem("language") as Language
-    if (savedLanguage && ["en", "vi", "ja"].includes(savedLanguage)) {
-      setLanguage(savedLanguage)
-    }
-  }, [])
+    setLanguageState(locale)
+  }, [locale])
 
   useEffect(() => {
     // Load translations for current language
@@ -50,9 +49,14 @@ export function LanguageProvider({ children, defaultLanguage = "en" }: LanguageP
     }
 
     loadTranslations()
-    // Save language to localStorage
-    localStorage.setItem("language", language)
   }, [language])
+
+  const setLanguage = (newLanguage: Language) => {
+    // Remove current locale from pathname and add new locale
+    const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, "") || "/"
+    const newPath = `/${newLanguage}${pathWithoutLocale}`
+    router.push(newPath)
+  }
 
   const t = (key: string, params?: Record<string, string>): string => {
     const keys = key.split(".")
@@ -78,15 +82,11 @@ export function LanguageProvider({ children, defaultLanguage = "en" }: LanguageP
     return result
   }
 
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang)
-  }
-
   return (
     <LanguageContext.Provider
       value={{
         language,
-        setLanguage: handleSetLanguage,
+        setLanguage,
         translations,
         t,
       }}
