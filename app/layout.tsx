@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { SessionProviderWrapper } from "@/app/components/session-provider"
 
 export const metadata: Metadata = {
   title: "v0 App",
@@ -16,9 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <SessionProviderWrapper>{children}</SessionProviderWrapper>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
