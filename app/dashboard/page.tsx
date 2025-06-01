@@ -134,7 +134,7 @@ export default function DashboardPage() {
                 </Card>
               </Link>
 
-              <Link href={`/practice/${user.preferredLanguage}/sentence-translation`}>
+              <Link href={`/practice/${user.preferredLanguage}/sentence-translation/topics`}>
                 <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer h-full">
                   <CardHeader className="text-center">
                     <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -142,7 +142,7 @@ export default function DashboardPage() {
                     </div>
                     <CardTitle className="text-lg text-slate-100">Sentence Translation</CardTitle>
                     <CardDescription className="text-slate-400">
-                      Practice translating sentences accurately
+                      Practice translating sentences by topic
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                 </Card>
               </Link>
 
-              <Link href={`/practice/${user.preferredLanguage}/paragraph-translation`}>
+              <Link href={`/practice/${user.preferredLanguage}/paragraph-translation/topics`}>
                 <Card className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70 transition-all cursor-pointer h-full">
                   <CardHeader className="text-center">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -162,7 +162,7 @@ export default function DashboardPage() {
                     </div>
                     <CardTitle className="text-lg text-slate-100">Paragraph Translation</CardTitle>
                     <CardDescription className="text-slate-400">
-                      Challenge yourself with complex paragraphs
+                      Challenge yourself with complex paragraphs by topic
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                       Vocabulary Learning
                     </Button>
                   </Link>
-                  <Link href="/practice/english/sentence-translation" className="block">
+                  <Link href="/practice/english/sentence-translation/topics" className="block">
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                       Sentence Translation
                     </Button>
                   </Link>
-                  <Link href="/practice/english/paragraph-translation" className="block">
+                  <Link href="/practice/english/paragraph-translation/topics" className="block">
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                       Vocabulary Learning
                     </Button>
                   </Link>
-                  <Link href="/practice/japanese/sentence-translation" className="block">
+                  <Link href="/practice/japanese/sentence-translation/topics" className="block">
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
@@ -242,7 +242,7 @@ export default function DashboardPage() {
                       Sentence Translation
                     </Button>
                   </Link>
-                  <Link href="/practice/japanese/paragraph-translation" className="block">
+                  <Link href="/practice/japanese/paragraph-translation/topics" className="block">
                     <Button
                       variant="outline"
                       className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-700/50"
